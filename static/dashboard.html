@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>MedGenomics Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; }
+        .navbar { background: #1a472a; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar h1 { font-size: 24px; }
+        .navbar-buttons { display: flex; gap: 10px; }
+        .container { max-width: 100%; margin: 20px auto; padding: 0 20px; }
+        .status-bar { background: white; padding: 12px 20px; border-radius: 6px; margin-bottom: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .status-text { font-size: 13px; color: #666; }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        button { background: #1a7a3a; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; }
+        button:hover { background: #0d5c28; }
+        button.secondary { background: #666; }
+        button.secondary:hover { background: #555; }
+        .search-box { background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .search-input { width: 100%; padding: 10px 15px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; }
+        .search-input:focus { outline: none; border-color: #1a7a3a; }
+        .two-column { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .folder { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 20px; border: 2px solid #1a7a3a; }
+        .folder-header { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .folder-icon { font-size: 28px; }
+        .folder-title { color: #1a7a3a; font-size: 20px; font-weight: 700; }
+        .folder-count { color: #666; font-size: 12px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; height: 600px; overflow-y: auto; padding: 10px; border: 1px solid #eee; border-radius: 6px; }
+        .card { background: #f9f9f9; padding: 12px; border-radius: 6px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.3s; border-left: 4px solid #1a7a3a; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 2px 6px rgba(0,0,0,0.15); background: white; }
+        .card-title { font-weight: 700; color: #1a7a3a; margin-bottom: 6px; font-size: 13px; }
+        .card-text { font-size: 11px; color: #666; line-height: 1.4; }
+        .badge { display: inline-block; padding: 2px 6px; border-radius: 10px; font-size: 9px; font-weight: 600; margin: 2px 2px 2px 0; background: #e8f5e9; color: #2e7d32; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 12px; padding: 30px; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; }
+        .modal-close { float: right; font-size: 24px; cursor: pointer; color: #999; }
+        .info-row { display: grid; grid-template-columns: 160px 1fr; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .info-label { font-weight: 600; color: #1a7a3a; }
+        .info-value { color: #666; word-break: break-word; }
+        .section { margin-top: 25px; padding-top: 15px; border-top: 2px solid #eee; }
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: white; padding: 20px; border-radius: 8px; text-align: center; border-top: 4px solid #1a7a3a; }
+        .stat-num { font-size: 36px; font-weight: 700; color: #1a7a3a; }
+        .stat-label { font-size: 13px; color: #666; margin-top: 8px; }
+        .chart-bar { margin: 12px 0; }
+        .chart-label { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 13px; }
+        .chart-fill { height: 24px; background: #1a7a3a; border-radius: 3px; }
+        .hidden { display: none; }
+        .loading { text-align: center; padding: 40px; color: #999; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>MedGenomics Dashboard</h1>
+        <div class="navbar-buttons">
+            <button onclick="showDashboard()">Dashboard</button>
+            <button onclick="showAnalytics()">Analytics</button>
+            <button onclick="exportData()" class="secondary">Export</button>
+            <button onclick="refreshData()" class="secondary">Refresh</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="status-bar">
+            <div class="status-text" id="statusText">Loaded data from database</div>
+            <div>
+                <button onclick="seedData()" class="secondary" style="padding: 8px 15px; font-size: 12px;">Seed Data</button>
+            </div>
+        </div>
+
+        <div id="dashboardView">
+            <div class="search-box">
+                <input type="text" id="search" class="search-input" placeholder="Search patients...">
+            </div>
+            
+            <div class="controls">
+                <button onclick="filterPatients('all')">All Patients</button>
+                <button onclick="filterPatients('active')">Active Treatment</button>
+                <button onclick="filterPatients('highRisk')">High Risk</button>
+                <button onclick="sortPatients('name')">Sort Name</button>
+                <button onclick="sortPatients('risk')">Sort Risk</button>
+            </div>
+            
+            <div class="two-column">
+                <div class="folder">
+                    <div class="folder-header">
+                        <div class="folder-icon">📁</div>
+                        <div>
+                            <div class="folder-title">Patients</div>
+                            <div class="folder-count" id="patientCount">Loading...</div>
+                        </div>
+                    </div>
+                    <div id="patientsGrid" class="grid"><div class="loading">Loading patients...</div></div>
+                </div>
+                
+                <div class="folder">
+                    <div class="folder-header">
+                        <div class="folder-icon">📁</div>
+                        <div>
+                            <div class="folder-title">Supplies</div>
+                            <div class="folder-count" id="supplyCount">Loading...</div>
+                        </div>
+                    </div>
+                    <div id="suppliesGrid" class="grid"><div class="loading">Loading supplies...</div></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="analyticsView" class="hidden">
+            <h2 style="color: #1a7a3a; margin-bottom: 20px;">Analytics</h2>
+            
+            <div class="stat-grid">
+                <div class="stat-card"><div class="stat-num" id="totalPts">0</div><div class="stat-label">Total Patients</div></div>
+                <div class="stat-card"><div class="stat-num" id="avgAgeStat">0</div><div class="stat-label">Avg Age</div></div>
+                <div class="stat-card"><div class="stat-num" id="highRiskStat">0</div><div class="stat-label">High Risk</div></div>
+                <div class="stat-card"><div class="stat-num" id="activeTxStat">0</div><div class="stat-label">Active</div></div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h3 style="color: #1a7a3a; margin-bottom: 15px;">Top Conditions</h3>
+                <div id="conditionChart"></div>
+            </div>
+
+            <div style="background: white; padding: 20px; border-radius: 8px;">
+                <h3 style="color: #1a7a3a; margin-bottom: 15px;">Risk Distribution</h3>
+                <div id="riskChart"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="patientModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="patientDetails"></div>
+        </div>
+    </div>
+
+    <div class="modal" id="supplyModal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="supplyDetails"></div>
+        </div>
+    </div>
+
+    <script>
+        let allPatients = [];
+        let allSupplies = [];
+        let filteredPatients = [];
+        let sortBy = 'name';
+
+        function seedData() {
+            document.getElementById("statusText").textContent = "Seed data already loaded in database. Click refresh to reload.";
+        }
+
+        async function loadData() {
+            try {
+                const pRes = await fetch('/patients');
+                allPatients = await pRes.json();
+                const sRes = await fetch('/inventory');
+                allSupplies = await sRes.json();
+                filteredPatients = allPatients;
+                
+                document.getElementById("patientCount").textContent = allPatients.length + " records";
+                document.getElementById("supplyCount").textContent = allSupplies.length + " records";
+                document.getElementById("statusText").textContent = `Loaded ${allPatients.length} patients, ${allSupplies.length} supplies`;
+                renderDashboard();
+            } catch (e) {
+                document.getElementById("statusText").textContent = "Error loading data";
+            }
+        }
+
+        function renderDashboard() {
+            let display = [...filteredPatients].sort((a, b) => a.name.localeCompare(b.name));
+            if (sortBy === 'risk') display.sort((a, b) => (b.genomic_data?.risk_score || 0) - (a.genomic_data?.risk_score || 0));
+            
+            document.getElementById("patientsGrid").innerHTML = display.map(p => {
+                const g = p.genomic_data || {};
+                return `<div class="card" onclick="showPatient('${p.id}')"><div class="card-title">${p.name}</div><div class="card-text">Age: ${g.age || 'N/A'}<br>Risk: ${g.risk_score || 'N/A'}/99<br><span class="badge">${g.treatment_status || 'N/A'}</span></div></div>`;
+            }).join("");
+            
+            document.getElementById("suppliesGrid").innerHTML = allSupplies.map(s => {
+                const status = s.qty_on_hand < s.reorder_point ? "CRITICAL" : "OK";
+                return `<div class="card" onclick="showSupply('${s.id}')"><div class="card-title">${s.item_name}</div><div class="card-text">Stock: ${s.qty_on_hand}<br>Cost: $${parseFloat(s.cost).toFixed(2)}<br><span class="badge">${status}</span></div></div>`;
+            }).join("");
+        }
+
+        function showPatient(id) {
+            const p = allPatients.find(x => x.id === id);
+            if (!p) return;
+            const g = p.genomic_data || {};
+            const html = `<h2>${p.name}</h2>
+                <div class="info-row"><div class="info-label">ID</div><div class="info-value">${p.id}</div></div>
+                <div class="info-row"><div class="info-label">Age</div><div class="info-value">${g.age}</div></div>
+                <div class="info-row"><div class="info-label">Risk</div><div class="info-value">${g.risk_score}/99</div></div>
+                <div class="info-row"><div class="info-label">Address</div><div class="info-value">${g.address}</div></div>
+                <div class="info-row"><div class="info-label">Last Visit</div><div class="info-value">${g.last_visit}</div></div>
+                <div class="section"><h3>Treatment</h3>
+                <div class="info-row"><div class="info-label">Type</div><div class="info-value">${g.current_treatment}</div></div>
+                <div class="info-row"><div class="info-label">Location</div><div class="info-value">${g.location}</div></div>
+                <div class="info-row"><div class="info-label">Status</div><div class="info-value"><span class="badge">${g.treatment_status}</span></div></div></div>`;
+            document.getElementById("patientDetails").innerHTML = html;
+            document.getElementById("patientModal").classList.add("active");
+        }
+
+        function showSupply(id) {
+            const s = allSupplies.find(x => x.id === id);
+            if (!s) return;
+            const status = s.qty_on_hand < s.reorder_point ? "CRITICAL" : "OK";
+            const html = `<h2>${s.item_name}</h2>
+                <div class="info-row"><div class="info-label">Stock</div><div class="info-value">${s.qty_on_hand}</div></div>
+                <div class="info-row"><div class="info-label">Cost</div><div class="info-value">$${parseFloat(s.cost).toFixed(2)}</div></div>
+                <div class="info-row"><div class="info-label">Total Value</div><div class="info-value">$${(s.qty_on_hand * parseFloat(s.cost)).toFixed(2)}</div></div>
+                <div class="info-row"><div class="info-label">Status</div><div class="info-value"><span class="badge">${status}</span></div></div>`;
+            document.getElementById("supplyDetails").innerHTML = html;
+            document.getElementById("supplyModal").classList.add("active");
+        }
+
+        function closeModal() {
+            document.getElementById("patientModal").classList.remove("active");
+            document.getElementById("supplyModal").classList.remove("active");
+        }
+
+        function filterPatients(type) {
+            if (type === 'all') filteredPatients = allPatients;
+            else if (type === 'active') filteredPatients = allPatients.filter(p => p.genomic_data?.treatment_status === 'Active');
+            else if (type === 'highRisk') filteredPatients = allPatients.filter(p => (p.genomic_data?.risk_score || 0) > 75);
+            renderDashboard();
+        }
+
+        function sortPatients(by) {
+            sortBy = by;
+            renderDashboard();
+        }
+
+        function showDashboard() {
+            document.getElementById("dashboardView").classList.remove("hidden");
+            document.getElementById("analyticsView").classList.add("hidden");
+        }
+
+        function showAnalytics() {
+            document.getElementById("dashboardView").classList.add("hidden");
+            document.getElementById("analyticsView").classList.remove("hidden");
+            
+            let ageSum = 0, highRisk = 0, activeTx = 0;
+            const conditions = {}, risks = { low: 0, med: 0, high: 0 };
+            
+            allPatients.forEach(p => {
+                const g = p.genomic_data || {};
+                ageSum += g.age || 0;
+                const risk = g.risk_score || 0;
+                
+                if (risk > 75) { highRisk++; risks.high++; }
+                else if (risk > 50) risks.med++;
+                else risks.low++;
+                
+                if (g.treatment_status === 'Active') activeTx++;
+                p.conditions.forEach(c => { conditions[c] = (conditions[c] || 0) + 1; });
+            });
+            
+            document.getElementById("totalPts").textContent = allPatients.length;
+            document.getElementById("avgAgeStat").textContent = Math.round(ageSum / (allPatients.length || 1));
+            document.getElementById("highRiskStat").textContent = highRisk;
+            document.getElementById("activeTxStat").textContent = activeTx;
+            
+            const condList = Object.entries(conditions).sort((a, b) => b[1] - a[1]).slice(0, 8);
+            const maxCond = Math.max(...condList.map(c => c[1]), 1);
+            document.getElementById("conditionChart").innerHTML = condList.map(([name, count]) =>
+                `<div class="chart-bar"><div class="chart-label"><span>${name}</span><span>${count}</span></div><div class="chart-fill" style="width: ${(count/maxCond)*100}%"></div></div>`
+            ).join("");
+            
+            document.getElementById("riskChart").innerHTML = `
+                <div class="chart-bar"><div class="chart-label"><span>Low</span><span>${risks.low}</span></div><div class="chart-fill" style="width: ${(risks.low/allPatients.length)*100}%; background: #4caf50;"></div></div>
+                <div class="chart-bar"><div class="chart-label"><span>Medium</span><span>${risks.med}</span></div><div class="chart-fill" style="width: ${(risks.med/allPatients.length)*100}%; background: #ff9800;"></div></div>
+                <div class="chart-bar"><div class="chart-label"><span>High</span><span>${risks.high}</span></div><div class="chart-fill" style="width: ${(risks.high/allPatients.length)*100}%; background: #f44336;"></div></div>
+            `;
+        }
+
+        function refreshData() {
+            loadData();
+        }
+
+        function exportData() {
+            const csv = "Name,Age,Risk,Status\n" + allPatients.map(p => 
+                `"${p.name}",${p.genomic_data?.age || ''},"${p.genomic_data?.treatment_status || ''}"`
+            ).join("\n");
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'export.csv';
+            a.click();
+        }
+
+        document.getElementById("search").addEventListener("keyup", (e) => {
+            const term = e.target.value.toLowerCase();
+            filteredPatients = allPatients.filter(p => p.name.toLowerCase().includes(term));
+            renderDashboard();
+        });
+
+        loadData();
+    </script>
+</body>
+</html>
