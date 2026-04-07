@@ -96,27 +96,25 @@
                 <h2 class="text-3xl font-extrabold tracking-tight">Inventory Pool</h2>
                 <p class="text-on-surface-variant">Real-time management of clinical supplies and laboratory hardware.</p>
             </div>
-            <button class="flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-lg shadow-lg hover:shadow-xl active:scale-95 transition-all">
+            <button onclick="document.getElementById('inventoryModal').classList.remove('hidden')" class="flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-lg shadow-lg hover:shadow-xl active:scale-95 transition-all">
                 <span class="material-symbols-outlined">shopping_cart</span>
                 <span>Order Supplies</span>
             </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
-                <option>All Supplies</option>
-                <option>Kits</option>
-                <option>Reagents</option>
-                <option>Equipment</option>
+            <input type="text" id="searchInput" placeholder="Search supplies..." class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary outline-none"/>
+            <select id="categoryFilter" class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
+                <option value="">All Categories</option>
+                <option value="Kits">Kits</option>
+                <option value="Reagents">Reagents</option>
+                <option value="Equipment">Equipment</option>
             </select>
-            <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
-                <option>All Status</option>
-                <option>Critical (<10%)</option>
-                <option>Low (<25%)</option>
-                <option>Healthy</option>
-            </select>
-            <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
-                <option>Global Providers</option>
+            <select id="statusFilter" class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
+                <option value="">All Status</option>
+                <option value="critical">Critical (<50%)</option>
+                <option value="low">Low (<150%)</option>
+                <option value="healthy">Healthy</option>
             </select>
             <div class="bg-primary/5 p-4 rounded-lg border border-primary/10 flex items-center gap-2">
                 <span class="text-2xl font-bold text-primary" id="lowStockAlert">0</span>
@@ -139,19 +137,31 @@
 </main>
 
 <script>
+let allItems = [];
+
 async function loadInventory() {
     try {
         const response = await fetch('/api/inventory');
-        const items = await response.json();
+        allItems = await response.json();
 
-        // Count low stock items
-        const lowStockCount = items.filter(i => {
-            const ratio = i.qty_on_hand / i.reorder_point;
-            return ratio < 1.5;
-        }).length;
-        document.getElementById('lowStockAlert').textContent = lowStockCount;
+        updateLowStockCount();
+        renderInventoryList(allItems);
+    } catch (err) {
+        console.error('Error loading inventory:', err);
+        document.getElementById('inventoryGridView').innerHTML = '<p class="text-center text-error col-span-full">Error loading inventory</p>';
+    }
+}
 
-        const inventoryHtml = items.map(item => {
+function updateLowStockCount() {
+    const lowStockCount = allItems.filter(i => {
+        const ratio = i.qty_on_hand / i.reorder_point;
+        return ratio < 1.5;
+    }).length;
+    document.getElementById('lowStockAlert').textContent = lowStockCount;
+}
+
+function renderInventoryList(items) {
+    const inventoryHtml = items.map(item => {
             const ratio = item.qty_on_hand / item.reorder_point;
             let status = 'healthy';
             let statusColor = 'primary';
@@ -212,12 +222,47 @@ async function loadInventory() {
             `;
         }).join('');
 
-        document.getElementById('inventoryGridView').innerHTML = inventoryHtml || '<p class="text-center text-on-surface-variant col-span-full">No supplies found</p>';
-    } catch (err) {
-        console.error('Error loading inventory:', err);
-        document.getElementById('inventoryGridView').innerHTML = '<p class="text-center text-error col-span-full">Error loading inventory</p>';
-    }
+    document.getElementById('inventoryGridView').innerHTML = inventoryHtml || '<p class="text-center text-on-surface-variant col-span-full">No supplies found</p>';
 }
+
+function searchAndFilter() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const category = document.getElementById('categoryFilter').value;
+    const status = document.getElementById('statusFilter').value;
+
+    let filtered = allItems;
+
+    if (query) {
+        filtered = filtered.filter(i =>
+            i.item_name.toLowerCase().includes(query) ||
+            i.id.toLowerCase().includes(query) ||
+            i.supplier.toLowerCase().includes(query)
+        );
+    }
+
+    if (category) {
+        filtered = filtered.filter(i => i.category === category);
+    }
+
+    if (status) {
+        if (status === 'critical') {
+            filtered = filtered.filter(i => (i.qty_on_hand / i.reorder_point) < 0.5);
+        } else if (status === 'low') {
+            filtered = filtered.filter(i => {
+                const ratio = i.qty_on_hand / i.reorder_point;
+                return ratio >= 0.5 && ratio < 1.5;
+            });
+        } else if (status === 'healthy') {
+            filtered = filtered.filter(i => (i.qty_on_hand / i.reorder_point) >= 1.5);
+        }
+    }
+
+    renderInventoryList(filtered);
+}
+
+document.getElementById('searchInput').addEventListener('input', searchAndFilter);
+document.getElementById('categoryFilter').addEventListener('change', searchAndFilter);
+document.getElementById('statusFilter').addEventListener('change', searchAndFilter);
 
 function showSupplyDetails(supplyId, supplyData) {
     const ratio = supplyData.qty_on_hand / supplyData.reorder_point;
@@ -295,14 +340,146 @@ function showSupplyDetails(supplyId, supplyData) {
             </div>
 
             <div class="pt-4 border-t border-surface-container flex gap-2">
-                <button class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90">Adjust Stock</button>
-                <button class="flex-1 py-2 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high">Order More</button>
+                <button class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90" onclick="editInventory('${supplyData.id}', ${JSON.stringify(supplyData).replace(/"/g, '&quot;')})">Edit</button>
+                <button class="flex-1 py-2 bg-red-600 text-white font-bold rounded-lg text-sm hover:bg-red-700" onclick="deleteInventory('${supplyData.id}')">Delete</button>
             </div>
         </div>
     `;
 }
 
+function editInventory(itemId, itemData) {
+    document.getElementById('modalTitle').textContent = 'Edit Supply';
+    document.getElementById('itemId').value = itemId;
+    document.getElementById('itemName').value = itemData.item_name;
+    document.getElementById('itemCategory').value = itemData.category;
+    document.getElementById('itemQty').value = itemData.qty_on_hand;
+    document.getElementById('itemReorder').value = itemData.reorder_point;
+    document.getElementById('itemCost').value = itemData.cost;
+    document.getElementById('itemLocation').value = itemData.location;
+    document.getElementById('itemSupplier').value = itemData.supplier;
+    document.getElementById('inventoryForm').dataset.editing = 'true';
+    document.getElementById('inventoryModal').classList.remove('hidden');
+}
+
+async function deleteInventory(itemId) {
+    if (!confirm('Are you sure you want to delete this item?')) return;
+
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(`/api/inventory/${itemId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Failed to delete item');
+        loadInventory();
+        document.getElementById('supplyDetailsPanel').innerHTML = '<p class="text-center text-on-surface-variant">Select a supply to view details</p>';
+    } catch (err) {
+        alert('Error deleting item: ' + err.message);
+    }
+}
+
+document.getElementById('inventoryForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    const itemId = document.getElementById('itemId').value;
+    const isEditing = document.getElementById('inventoryForm').dataset.editing === 'true';
+
+    const data = {
+        item_name: document.getElementById('itemName').value,
+        category: document.getElementById('itemCategory').value,
+        qty_on_hand: parseInt(document.getElementById('itemQty').value),
+        reorder_point: parseInt(document.getElementById('itemReorder').value),
+        cost: parseFloat(document.getElementById('itemCost').value),
+        location: document.getElementById('itemLocation').value,
+        supplier: document.getElementById('itemSupplier').value
+    };
+
+    try {
+        const url = isEditing ? `/api/inventory/${itemId}` : '/api/inventory';
+        const method = isEditing ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) throw new Error('Failed to save item');
+
+        document.getElementById('inventoryModal').classList.add('hidden');
+        document.getElementById('inventoryForm').reset();
+        document.getElementById('inventoryForm').dataset.editing = 'false';
+        loadInventory();
+    } catch (err) {
+        alert('Error: ' + err.message);
+    }
+});
+
+function closeInventoryModal() {
+    document.getElementById('inventoryModal').classList.add('hidden');
+    document.getElementById('inventoryForm').reset();
+    document.getElementById('inventoryForm').dataset.editing = 'false';
+}
+
 loadInventory();
 </script>
+
+<!-- Inventory Create/Edit Modal -->
+<div id="inventoryModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-surface-container-lowest rounded-xl max-w-md w-full shadow-xl">
+        <div class="border-b border-surface-container px-6 py-4 flex items-center justify-between">
+            <h2 id="modalTitle" class="text-lg font-bold">Add New Supply</h2>
+            <button onclick="closeInventoryModal()" class="text-on-surface-variant hover:text-on-surface">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="inventoryForm" class="p-6 space-y-4 max-h-96 overflow-y-auto">
+            <input type="hidden" id="itemId" />
+            <div>
+                <label class="block text-sm font-bold text-on-surface-variant mb-1">Item Name</label>
+                <input type="text" id="itemName" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface-variant mb-1">Category</label>
+                <select id="itemCategory" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none">
+                    <option value="">Select category</option>
+                    <option value="Kits">Kits</option>
+                    <option value="Reagents">Reagents</option>
+                    <option value="Equipment">Equipment</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-on-surface-variant mb-1">Qty on Hand</label>
+                    <input type="number" id="itemQty" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-on-surface-variant mb-1">Reorder Point</label>
+                    <input type="number" id="itemReorder" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface-variant mb-1">Unit Cost ($)</label>
+                <input type="number" id="itemCost" step="0.01" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface-variant mb-1">Location</label>
+                <input type="text" id="itemLocation" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface-variant mb-1">Supplier</label>
+                <input type="text" id="itemSupplier" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+            </div>
+            <div class="flex gap-2 pt-4">
+                <button type="submit" class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90">Save</button>
+                <button type="button" onclick="closeInventoryModal()" class="flex-1 py-2 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>
