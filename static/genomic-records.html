@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Genomic Records - MedGenomics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#006028",
+                        "secondary": "#005cba",
+                        "tertiary": "#794600",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1a1c1c",
+                        "surface": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container": "#eeeeee",
+                        "surface-container-high": "#e8e8e8",
+                        "outline": "#6f7a6e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<main class="pt-16 min-h-screen">
+    <header class="bg-white/80 backdrop-blur-xl fixed top-0 w-full z-50 h-16 flex items-center px-6">
+        <a href="/" class="flex items-center gap-2 text-green-900 font-bold">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h1 class="ml-4 text-xl font-bold">Genomic Records</h1>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="mb-12">
+            <h1 class="text-4xl font-extrabold tracking-tight mb-2">Genomic Records</h1>
+            <p class="text-on-surface-variant">Detailed genomic profiles, variant data, and clinical annotations for all patients.</p>
+        </div>
+
+        <div class="bg-surface-container-low rounded-xl p-6 mb-8">
+            <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex-1">
+                    <input type="text" placeholder="Search by patient ID, gene, or variant..." class="w-full bg-white border-none rounded-lg text-sm py-2 px-4 focus:ring-1 focus:ring-primary"/>
+                </div>
+                <button class="px-6 py-2 bg-white rounded-lg text-sm font-bold hover:bg-slate-50">Advanced Search</button>
+            </div>
+        </div>
+
+        <div id="recordsTable" class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+            <div class="p-6">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-surface-container">
+                            <th class="text-left text-sm font-bold text-on-surface-variant pb-4">Patient ID</th>
+                            <th class="text-left text-sm font-bold text-on-surface-variant pb-4">Gene</th>
+                            <th class="text-left text-sm font-bold text-on-surface-variant pb-4">Variant</th>
+                            <th class="text-left text-sm font-bold text-on-surface-variant pb-4">Risk Level</th>
+                            <th class="text-left text-sm font-bold text-on-surface-variant pb-4">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr class="animate-pulse">
+                            <td class="py-3 h-4 bg-surface-container rounded"></td>
+                            <td class="py-3 h-4 bg-surface-container rounded"></td>
+                            <td class="py-3 h-4 bg-surface-container rounded"></td>
+                            <td class="py-3 h-4 bg-surface-container rounded"></td>
+                            <td class="py-3 h-4 bg-surface-container rounded"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+fetch('/api/patients')
+    .then(r => r.json())
+    .then(patients => {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = patients.map(p => `
+            <tr class="border-b border-surface-container hover:bg-surface-container-low transition-colors">
+                <td class="py-4 text-sm font-medium">${p.id}</td>
+                <td class="py-4 text-sm">BRCA2</td>
+                <td class="py-4 text-sm font-mono">${p.dna_marker}</td>
+                <td class="py-4">
+                    <span class="px-2 py-1 text-xs font-bold rounded ${p.risk_score > 80 ? 'bg-error/10 text-error' : p.risk_score > 40 ? 'bg-tertiary/10 text-tertiary' : 'bg-primary/10 text-primary'}">
+                        ${p.risk_score}%
+                    </span>
+                </td>
+                <td class="py-4">
+                    <span class="text-xs font-medium text-on-surface-variant">${p.risk_score > 80 ? 'CRITICAL' : 'ACTIVE'}</span>
+                </td>
+            </tr>
+        `).join('');
+    })
+    .catch(err => console.error('Error loading records:', err));
+</script>
+</body>
+</html>

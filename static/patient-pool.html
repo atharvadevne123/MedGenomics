@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Patient Pool - MedGenomics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#006028",
+                        "secondary": "#005cba",
+                        "tertiary": "#794600",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1a1c1c",
+                        "surface": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container": "#eeeeee",
+                        "surface-container-high": "#e8e8e8",
+                        "outline": "#6f7a6e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen">
+<aside class="hidden xl:flex h-screen w-64 fixed left-0 top-0 bg-slate-50 flex-col pt-20 py-4 space-y-2 z-40">
+    <div class="px-6 mb-6">
+        <div class="flex items-center gap-3 py-4">
+            <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl text-white">
+                <span class="material-symbols-outlined">genetics</span>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-on-surface leading-tight">Precision Care</h3>
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Clinical Atelier</p>
+            </div>
+        </div>
+    </div>
+    <nav class="flex-1 space-y-1 px-2">
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="font-['Manrope'] text-sm font-medium">Dashboard</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 bg-green-50 text-green-800 rounded-lg" href="/patient-pool">
+            <span class="material-symbols-outlined">group</span>
+            <span class="font-['Manrope'] text-sm font-medium">Patient Pool</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/inventory">
+            <span class="material-symbols-outlined">inventory_2</span>
+            <span class="font-['Manrope'] text-sm font-medium">Inventory</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/analytics">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="font-['Manrope'] text-sm font-medium">Analytics</span>
+        </a>
+    </nav>
+</aside>
+
+<main class="xl:pl-64 pt-16 min-h-screen w-full">
+    <header class="bg-white/80 backdrop-blur-xl fixed top-0 w-full z-50 h-16 flex items-center px-6">
+        <a href="/" class="flex items-center gap-2 text-green-900 font-bold hover:text-green-700">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h1 class="ml-4 text-xl font-bold">Patient Pool</h1>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+            <div>
+                <h2 class="text-3xl font-extrabold tracking-tight">Patient Pool</h2>
+                <p class="text-on-surface-variant">Database of active genomic participant profiles with real-time risk assessments.</p>
+            </div>
+            <button class="flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all">
+                <span class="material-symbols-outlined">person_add</span>
+                <span>Add New Patient</span>
+            </button>
+        </div>
+
+        <div class="bg-surface-container-low rounded-2xl p-6 mb-8">
+            <div class="flex gap-4 mb-6">
+                <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary flex-1">
+                    <option>All Ages</option>
+                    <option>18 - 35</option>
+                    <option>36 - 60</option>
+                    <option>60+</option>
+                </select>
+                <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary flex-1">
+                    <option>All Risk Levels</option>
+                    <option>High (>80%)</option>
+                    <option>Moderate (40-80%)</option>
+                    <option>Low (<40%)</option>
+                </select>
+                <button class="px-4 py-2 bg-white rounded-lg text-sm font-bold hover:bg-slate-50">Clear filters</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <div id="patientDetailView" class="lg:col-span-2 space-y-6">
+                <!-- Patient list will be populated here -->
+            </div>
+
+            <div class="lg:col-span-1">
+                <div id="patientDetailsPanel" class="bg-surface-container-lowest rounded-xl p-6 shadow-sm sticky top-24">
+                    <p class="text-center text-on-surface-variant">Select a patient to view details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+async function loadPatients() {
+    try {
+        const response = await fetch('/api/patients');
+        const patients = await response.json();
+
+        const patientListHtml = patients.map(p => {
+            const riskColor = p.risk_score > 80 ? 'error' : p.risk_score > 40 ? 'tertiary' : 'primary';
+            const riskLabel = p.risk_score > 80 ? 'CRITICAL' : p.risk_score > 40 ? 'MODERATE' : 'LOW';
+
+            return `
+                <div class="bg-surface-container-lowest rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all border-l-4 border-${riskColor}"
+                     onclick="showPatientDetails('${p.id}', ${JSON.stringify(p).replace(/"/g, '&quot;')})">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-4 flex-1">
+                            <div class="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-600 text-lg">
+                                ${p.initials}
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-on-surface">${p.name}</h3>
+                                <p class="text-xs text-on-surface-variant font-mono">ID: ${p.id}</p>
+                                <p class="text-xs text-on-surface-variant mt-1">Age: ${p.age} years</p>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 bg-${riskColor}-container text-${riskColor} text-[10px] font-bold rounded whitespace-nowrap">
+                            ${riskLabel}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-surface-container">
+                        <div class="text-center">
+                            <p class="text-[10px] uppercase text-on-surface-variant font-bold">Risk Score</p>
+                            <p class="text-lg font-bold text-${riskColor}">${p.risk_score}%</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[10px] uppercase text-on-surface-variant font-bold">DNA Marker</p>
+                            <p class="text-lg font-bold text-secondary">${p.dna_marker}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[10px] uppercase text-on-surface-variant font-bold">Status</p>
+                            <p class="text-xs font-bold text-on-surface">Active</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('patientDetailView').innerHTML = patientListHtml || '<p class="text-center text-on-surface-variant">No patients found</p>';
+    } catch (err) {
+        console.error('Error loading patients:', err);
+        document.getElementById('patientDetailView').innerHTML = '<p class="text-center text-error">Error loading patients</p>';
+    }
+}
+
+function showPatientDetails(patientId, patientData) {
+    const conditionsHtml = Object.entries(patientData.conditions || {})
+        .map(([condition, value]) => value ? `<span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded">${condition}</span>` : '')
+        .join('');
+
+    const genomicDataHtml = Object.entries(patientData.genomic_data || {})
+        .map(([key, value]) => `
+            <div class="flex justify-between py-2 border-b border-surface-container">
+                <span class="text-on-surface-variant font-medium text-sm">${key}</span>
+                <span class="font-bold text-on-surface">${value}</span>
+            </div>
+        `)
+        .join('');
+
+    const riskColor = patientData.risk_score > 80 ? 'error' : patientData.risk_score > 40 ? 'tertiary' : 'primary';
+
+    document.getElementById('patientDetailsPanel').innerHTML = `
+        <div class="space-y-6">
+            <div class="text-center pb-4 border-b border-surface-container">
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-600 text-2xl mx-auto mb-2">
+                    ${patientData.initials}
+                </div>
+                <h3 class="text-xl font-bold text-on-surface">${patientData.name}</h3>
+                <p class="text-xs text-on-surface-variant font-mono mt-1">${patientData.id}</p>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-1">Risk Score</p>
+                    <div class="flex items-center gap-2">
+                        <div class="flex-1 h-3 bg-surface-container rounded-full overflow-hidden">
+                            <div class="h-full bg-${riskColor} rounded-full" style="width: ${patientData.risk_score}%"></div>
+                        </div>
+                        <span class="text-lg font-bold text-${riskColor}">${patientData.risk_score}%</span>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-2">Patient Info</p>
+                    <div class="space-y-1">
+                        <div class="flex justify-between">
+                            <span class="text-on-surface-variant">Age</span>
+                            <span class="font-bold">${patientData.age} years</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-on-surface-variant">DNA Marker</span>
+                            <span class="font-bold text-secondary">${patientData.dna_marker}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-2">Conditions</p>
+                    <div class="flex flex-wrap gap-2">
+                        ${conditionsHtml || '<p class="text-xs text-on-surface-variant">No conditions recorded</p>'}
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-2">Genomic Data</p>
+                    <div class="space-y-1 text-sm">
+                        ${genomicDataHtml || '<p class="text-xs text-on-surface-variant">No genomic data available</p>'}
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-surface-container flex gap-2">
+                <button class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90">Edit</button>
+                <button class="flex-1 py-2 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high">View Details</button>
+            </div>
+        </div>
+    `;
+}
+
+loadPatients();
+</script>
+</body>
+</html>

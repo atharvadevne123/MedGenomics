@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Inventory Pool - MedGenomics</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#006028",
+                        "secondary": "#005cba",
+                        "tertiary": "#794600",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1a1c1c",
+                        "surface": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container": "#eeeeee",
+                        "surface-container-high": "#e8e8e8",
+                        "outline": "#6f7a6e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface flex min-h-screen">
+<aside class="hidden xl:flex h-screen w-64 fixed left-0 top-0 bg-slate-50 flex-col pt-20 py-4 z-40">
+    <div class="px-6 mb-6">
+        <div class="flex items-center gap-3 py-4">
+            <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl text-white">
+                <span class="material-symbols-outlined">genetics</span>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold text-on-surface">Precision Care</h3>
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold">Clinical Atelier</p>
+            </div>
+        </div>
+    </div>
+    <nav class="flex-1 space-y-1 px-2">
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all" href="/">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span class="text-sm font-medium">Dashboard</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all" href="/patient-pool">
+            <span class="material-symbols-outlined">group</span>
+            <span class="text-sm font-medium">Patient Pool</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 bg-green-50 text-green-800 rounded-lg" href="/inventory">
+            <span class="material-symbols-outlined">inventory_2</span>
+            <span class="text-sm font-medium">Inventory</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all" href="/analytics">
+            <span class="material-symbols-outlined">analytics</span>
+            <span class="text-sm font-medium">Analytics</span>
+        </a>
+    </nav>
+</aside>
+
+<main class="xl:pl-64 pt-16 min-h-screen w-full">
+    <header class="bg-white/80 backdrop-blur-xl fixed top-0 w-full z-50 h-16 flex items-center px-6">
+        <a href="/" class="flex items-center gap-2 text-green-900 font-bold hover:text-green-700">
+            <span class="material-symbols-outlined">arrow_back</span>
+        </a>
+        <h1 class="ml-4 text-xl font-bold">Inventory</h1>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+            <div>
+                <h2 class="text-3xl font-extrabold tracking-tight">Inventory Pool</h2>
+                <p class="text-on-surface-variant">Real-time management of clinical supplies and laboratory hardware.</p>
+            </div>
+            <button class="flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-lg shadow-lg hover:shadow-xl active:scale-95 transition-all">
+                <span class="material-symbols-outlined">shopping_cart</span>
+                <span>Order Supplies</span>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
+                <option>All Supplies</option>
+                <option>Kits</option>
+                <option>Reagents</option>
+                <option>Equipment</option>
+            </select>
+            <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
+                <option>All Status</option>
+                <option>Critical (<10%)</option>
+                <option>Low (<25%)</option>
+                <option>Healthy</option>
+            </select>
+            <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
+                <option>Global Providers</option>
+            </select>
+            <div class="bg-primary/5 p-4 rounded-lg border border-primary/10 flex items-center gap-2">
+                <span class="text-2xl font-bold text-primary" id="lowStockAlert">0</span>
+                <p class="text-xs font-bold text-primary/70">Low Stock</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div id="inventoryGridView" class="lg:col-span-2 grid gap-6">
+                <!-- Inventory items will be populated here -->
+            </div>
+
+            <div class="lg:col-span-1">
+                <div id="supplyDetailsPanel" class="bg-surface-container-lowest rounded-xl p-6 shadow-sm sticky top-24">
+                    <p class="text-center text-on-surface-variant">Select a supply to view details</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+async function loadInventory() {
+    try {
+        const response = await fetch('/api/inventory');
+        const items = await response.json();
+
+        // Count low stock items
+        const lowStockCount = items.filter(i => {
+            const ratio = i.qty_on_hand / i.reorder_point;
+            return ratio < 1.5;
+        }).length;
+        document.getElementById('lowStockAlert').textContent = lowStockCount;
+
+        const inventoryHtml = items.map(item => {
+            const ratio = item.qty_on_hand / item.reorder_point;
+            let status = 'healthy';
+            let statusColor = 'primary';
+
+            if (ratio < 0.5) {
+                status = 'CRITICAL';
+                statusColor = 'error';
+            } else if (ratio < 1.5) {
+                status = 'LOW';
+                statusColor = 'tertiary';
+            } else {
+                status = 'HEALTHY';
+                statusColor = 'primary';
+            }
+
+            const percentage = Math.min((ratio / 2) * 100, 100);
+
+            return `
+                <div class="bg-surface-container-lowest rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer border-l-4 border-${statusColor}"
+                     onclick="showSupplyDetails('${item.id}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold text-on-surface">${item.item_name}</h3>
+                            <p class="text-xs text-on-surface-variant mt-1">Supplier: ${item.supplier}</p>
+                        </div>
+                        <span class="px-3 py-1 bg-${statusColor}-container text-${statusColor} text-[10px] font-bold rounded whitespace-nowrap">
+                            ${status}
+                        </span>
+                    </div>
+
+                    <div class="space-y-3 mt-4 pt-4 border-t border-surface-container">
+                        <div>
+                            <div class="flex justify-between mb-2 text-sm">
+                                <span class="text-on-surface-variant">Stock Level</span>
+                                <span class="font-bold">${item.qty_on_hand} / ${item.reorder_point} Units</span>
+                            </div>
+                            <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+                                <div class="h-full bg-${statusColor} rounded-full" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="text-center">
+                                <p class="text-[10px] uppercase text-on-surface-variant font-bold">Category</p>
+                                <p class="text-xs font-bold text-on-surface mt-1">${item.category}</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-[10px] uppercase text-on-surface-variant font-bold">Unit Cost</p>
+                                <p class="text-xs font-bold text-on-surface mt-1">$${item.cost.toFixed(2)}</p>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-[10px] uppercase text-on-surface-variant font-bold">Location</p>
+                                <p class="text-xs font-bold text-on-surface mt-1">${item.location}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        document.getElementById('inventoryGridView').innerHTML = inventoryHtml || '<p class="text-center text-on-surface-variant col-span-full">No supplies found</p>';
+    } catch (err) {
+        console.error('Error loading inventory:', err);
+        document.getElementById('inventoryGridView').innerHTML = '<p class="text-center text-error col-span-full">Error loading inventory</p>';
+    }
+}
+
+function showSupplyDetails(supplyId, supplyData) {
+    const ratio = supplyData.qty_on_hand / supplyData.reorder_point;
+    let status = 'HEALTHY';
+    let statusColor = 'primary';
+
+    if (ratio < 0.5) {
+        status = 'CRITICAL';
+        statusColor = 'error';
+    } else if (ratio < 1.5) {
+        status = 'LOW';
+        statusColor = 'tertiary';
+    }
+
+    const totalValue = supplyData.qty_on_hand * supplyData.cost;
+    const percentage = Math.min((ratio / 2) * 100, 100);
+
+    document.getElementById('supplyDetailsPanel').innerHTML = `
+        <div class="space-y-6">
+            <div class="pb-4 border-b border-surface-container">
+                <div class="flex items-start justify-between mb-2">
+                    <h3 class="text-xl font-bold text-on-surface">${supplyData.item_name}</h3>
+                    <span class="px-3 py-1 bg-${statusColor}-container text-${statusColor} text-[10px] font-bold rounded">
+                        ${status}
+                    </span>
+                </div>
+                <p class="text-xs text-on-surface-variant font-mono">${supplyData.id}</p>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-2">Stock Status</p>
+                    <div class="flex items-center gap-3">
+                        <div class="flex-1">
+                            <div class="h-3 bg-surface-container rounded-full overflow-hidden">
+                                <div class="h-full bg-${statusColor} rounded-full" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                        <span class="text-sm font-bold text-${statusColor} w-20">${supplyData.qty_on_hand}/${supplyData.reorder_point}</span>
+                    </div>
+                    <p class="text-xs text-on-surface-variant mt-2">Reorder Point: ${supplyData.reorder_point} units</p>
+                </div>
+
+                <div>
+                    <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-2">Details</p>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-on-surface-variant">Category</span>
+                            <span class="font-bold">${supplyData.category}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-on-surface-variant">Supplier</span>
+                            <span class="font-bold">${supplyData.supplier}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-on-surface-variant">Location</span>
+                            <span class="font-bold">${supplyData.location}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-surface-container-low p-3 rounded-lg">
+                    <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-2">Pricing</p>
+                    <div class="space-y-1 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-on-surface-variant">Unit Cost</span>
+                            <span class="font-bold">$${supplyData.cost.toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-on-surface-variant">Total Value</span>
+                            <span class="font-bold text-primary">$${totalValue.toFixed(2)}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-t border-surface-container flex gap-2">
+                <button class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90">Adjust Stock</button>
+                <button class="flex-1 py-2 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high">Order More</button>
+            </div>
+        </div>
+    `;
+}
+
+loadInventory();
+</script>
+</body>
+</html>
