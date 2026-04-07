@@ -2,8 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer
-from fastapi.security.http import HTTPAuthCredentials
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy import create_engine, Column, String, Integer, Float, JSON, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
@@ -150,7 +149,7 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def verify_token(credentials: HTTPAuthCredentials) -> dict:
+def verify_token(credentials: HTTPAuthorizationCredentials) -> dict:
     try:
         payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
@@ -445,7 +444,7 @@ def login(user_data: UserLogin, db: Session = Depends(get_db)):
 
 # Patient CRUD Endpoints
 @app.post("/api/patients", response_model=PatientResponse)
-def create_patient(patient_data: PatientCreate, db: Session = Depends(get_db), credentials: HTTPAuthCredentials = Depends(security)):
+def create_patient(patient_data: PatientCreate, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Depends(security)):
     verify_token(credentials)
 
     import uuid
@@ -473,7 +472,7 @@ def get_patient(patient_id: str, db: Session = Depends(get_db)):
     return patient
 
 @app.put("/api/patients/{patient_id}", response_model=PatientResponse)
-def update_patient(patient_id: str, patient_data: PatientUpdate, db: Session = Depends(get_db), credentials: HTTPAuthCredentials = Depends(security)):
+def update_patient(patient_id: str, patient_data: PatientUpdate, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Depends(security)):
     verify_token(credentials)
 
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
@@ -498,7 +497,7 @@ def update_patient(patient_id: str, patient_data: PatientUpdate, db: Session = D
     return patient
 
 @app.delete("/api/patients/{patient_id}")
-def delete_patient(patient_id: str, db: Session = Depends(get_db), credentials: HTTPAuthCredentials = Depends(security)):
+def delete_patient(patient_id: str, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Depends(security)):
     verify_token(credentials)
 
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
@@ -541,7 +540,7 @@ def search_patients(query: str = "", risk_min: float = 0, risk_max: float = 100,
 
 # Inventory CRUD Endpoints
 @app.post("/api/inventory", response_model=InventoryResponse)
-def create_inventory(inventory_data: InventoryCreate, db: Session = Depends(get_db), credentials: HTTPAuthCredentials = Depends(security)):
+def create_inventory(inventory_data: InventoryCreate, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Depends(security)):
     verify_token(credentials)
 
     item_id = f"INV-{str(len(db.query(Inventory).all()) + 1).zfill(3)}"
@@ -568,7 +567,7 @@ def get_inventory_item(item_id: str, db: Session = Depends(get_db)):
     return item
 
 @app.put("/api/inventory/{item_id}", response_model=InventoryResponse)
-def update_inventory(item_id: str, inventory_data: InventoryUpdate, db: Session = Depends(get_db), credentials: HTTPAuthCredentials = Depends(security)):
+def update_inventory(item_id: str, inventory_data: InventoryUpdate, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Depends(security)):
     verify_token(credentials)
 
     item = db.query(Inventory).filter(Inventory.id == item_id).first()
@@ -595,7 +594,7 @@ def update_inventory(item_id: str, inventory_data: InventoryUpdate, db: Session 
     return item
 
 @app.delete("/api/inventory/{item_id}")
-def delete_inventory(item_id: str, db: Session = Depends(get_db), credentials: HTTPAuthCredentials = Depends(security)):
+def delete_inventory(item_id: str, db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Depends(security)):
     verify_token(credentials)
 
     item = db.query(Inventory).filter(Inventory.id == item_id).first()
