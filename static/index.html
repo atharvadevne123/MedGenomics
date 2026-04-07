@@ -3,42 +3,77 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>MedGenomics | Precision Care Clinical Atelier</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <title>MedGenomics Clinical Overview</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
                 extend: {
-                    colors: {
-                        "primary": "#006028",
-                        "secondary": "#005cba",
-                        "tertiary": "#794600",
-                        "error": "#ba1a1a",
-                        "on-surface": "#1a1c1c",
-                        "surface": "#f9f9f9",
+                    "colors": {
+                        "on-tertiary-container": "#ffe7d4",
+                        "surface-variant": "#e2e2e2",
+                        "surface-bright": "#f9f9f9",
                         "surface-container-lowest": "#ffffff",
-                        "surface-container-low": "#f3f3f3",
+                        "background": "#f9f9f9",
                         "surface-container": "#eeeeee",
+                        "error": "#ba1a1a",
                         "surface-container-high": "#e8e8e8",
+                        "secondary-fixed-dim": "#aac7ff",
+                        "secondary": "#005cba",
+                        "primary": "#006028",
+                        "tertiary-container": "#9b5b00",
+                        "on-secondary-fixed": "#001b3e",
+                        "inverse-primary": "#7fda8e",
+                        "on-primary-container": "#aaffb5",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed-variant": "#693c00",
+                        "error-container": "#ffdad6",
+                        "primary-container": "#1a7a3a",
+                        "on-background": "#1a1c1c",
+                        "secondary-fixed": "#d7e3ff",
+                        "on-secondary-container": "#002d61",
+                        "secondary-container": "#5095fe",
+                        "on-primary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#9bf7a8",
+                        "primary-fixed-dim": "#7fda8e",
+                        "inverse-on-surface": "#f0f1f1",
+                        "tertiary-fixed-dim": "#ffb870",
+                        "on-secondary": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#2f3131",
                         "outline": "#6f7a6e",
+                        "on-tertiary-fixed": "#2c1600",
+                        "on-primary-fixed-variant": "#005322",
+                        "surface-tint": "#016d2f",
+                        "surface-dim": "#dadada",
+                        "surface": "#f9f9f9",
+                        "surface-container-highest": "#e2e2e2",
+                        "on-secondary-fixed-variant": "#00458e",
+                        "surface-container-low": "#f3f3f3",
+                        "on-surface": "#1a1c1c",
+                        "outline-variant": "#becabc",
+                        "on-primary-fixed": "#002109",
+                        "tertiary-fixed": "#ffdcbe",
+                        "tertiary": "#794600",
                         "on-surface-variant": "#3f493f"
                     },
-                    borderRadius: {
+                    "borderRadius": {
                         "DEFAULT": "0.125rem",
                         "lg": "0.25rem",
                         "xl": "0.5rem",
                         "full": "0.75rem"
                     },
-                    fontFamily: {
+                    "fontFamily": {
                         "headline": ["Manrope"],
                         "body": ["Inter"],
                         "label": ["Inter"]
                     }
-                }
-            }
+                },
+            },
         }
     </script>
     <style>
@@ -46,149 +81,304 @@
         h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-            vertical-align: middle;
         }
-        .bg-primary-gradient {
-            background: linear-gradient(135deg, #006028 0%, #1a7a3a 100%);
-        }
+        .tonal-shift { background-color: #f3f3f3; }
     </style>
 </head>
-<body class="bg-surface text-on-surface antialiased">
-<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,96,40,0.06)] flex items-center justify-between px-6 h-16 font-['Manrope'] tracking-tight">
-    <div class="flex items-center gap-8">
-        <span class="text-xl font-bold text-green-900 dark:text-green-50 tracking-tighter">MedGenomics</span>
-        <nav class="hidden md:flex items-center gap-6 text-sm">
-            <div class="flex items-center gap-2 text-slate-400">
-                <span>Dashboard</span>
-                <span class="material-symbols-outlined text-xs">chevron_right</span>
-                <span class="text-green-700 dark:text-green-400 font-semibold border-b-2 border-green-700">Overview</span>
-            </div>
-        </nav>
+<body class="bg-background text-on-background min-h-screen flex">
+<!-- SideNavBar Shell -->
+<aside class="hidden md:flex flex-col h-screen w-64 bg-zinc-50 dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 sticky top-0">
+    <div class="px-6 py-8">
+        <h1 class="text-lg font-black text-emerald-900 dark:text-emerald-100">MedGenomics</h1>
+        <p class="text-xs text-zinc-500 font-medium tracking-wide">Clinical Data Lake</p>
     </div>
-    <div class="flex items-center gap-4">
-        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant text-xs font-medium">
-            <span class="material-symbols-outlined text-sm text-primary">sync</span>
-            <span>System Synced</span>
-        </div>
-        <button class="p-2 rounded-full hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
-            <span class="material-symbols-outlined text-slate-500">notifications</span>
-        </button>
-        <button class="p-2 rounded-full hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
-            <span class="material-symbols-outlined text-slate-500">settings</span>
-        </button>
-    </div>
-</header>
-
-<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 dark:bg-slate-950 flex flex-col pt-20 pb-4 space-y-2 z-40">
-    <div class="px-6 mb-6">
-        <div class="flex items-center gap-3 p-3 bg-surface-container-lowest rounded-xl shadow-sm">
-            <div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container">
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">genetics</span>
-            </div>
-            <div>
-                <p class="text-xs font-bold text-primary">Precision Care</p>
-                <p class="text-[10px] text-slate-500">Clinical Atelier</p>
-            </div>
-        </div>
-    </div>
-    <nav class="flex-1 space-y-1">
-        <a class="flex items-center gap-3 py-2.5 px-4 bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-lg mx-2 font-['Manrope'] text-sm font-semibold transition-all hover:translate-x-1" href="/">
-            <span class="material-symbols-outlined">dashboard</span>
-            <span>Dashboard</span>
+    <nav class="flex-1 px-4 space-y-1">
+        <a class="flex items-center px-4 py-3 text-emerald-700 dark:text-emerald-300 font-bold border-r-4 border-emerald-700 dark:border-emerald-400 translate-x-1 duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-900" href="/">
+            <span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+            <span class="text-sm font-medium">Dashboard</span>
         </a>
-        <a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg mx-2 font-['Manrope'] text-sm font-medium transition-all hover:translate-x-1" href="/genomic-records">
-            <span class="material-symbols-outlined">genetics</span>
-            <span>Genomic Records</span>
+        <a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/genomic-records">
+            <span class="material-symbols-outlined mr-3" data-icon="dna">genetics</span>
+            <span class="text-sm font-medium">Genomic Records</span>
         </a>
-        <a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg mx-2 font-['Manrope'] text-sm font-medium transition-all hover:translate-x-1" href="/patient-pool">
-            <span class="material-symbols-outlined">group</span>
-            <span>Patient Pool</span>
+        <a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/patient-pool">
+            <span class="material-symbols-outlined mr-3" data-icon="database">database</span>
+            <span class="text-sm font-medium">Patient Pool</span>
         </a>
-        <a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg mx-2 font-['Manrope'] text-sm font-medium transition-all hover:translate-x-1" href="/inventory">
-            <span class="material-symbols-outlined">inventory_2</span>
-            <span>Inventory</span>
+        <a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/inventory">
+            <span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>
+            <span class="text-sm font-medium">Inventory</span>
         </a>
-        <a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg mx-2 font-['Manrope'] text-sm font-medium transition-all hover:translate-x-1" href="/analytics">
-            <span class="material-symbols-outlined">analytics</span>
-            <span>Analytics</span>
+        <a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/analytics">
+            <span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span>
+            <span class="text-sm font-medium">Analytics</span>
         </a>
     </nav>
+    <div class="px-4 py-6 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
+        <a class="flex items-center px-4 py-2 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 hover:bg-zinc-100 transition-colors" href="#">
+            <span class="material-symbols-outlined mr-3 text-lg" data-icon="settings">settings</span>
+            <span class="text-xs font-medium">Settings</span>
+        </a>
+        <a class="flex items-center px-4 py-2 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 hover:bg-zinc-100 transition-colors" href="#">
+            <span class="material-symbols-outlined mr-3 text-lg" data-icon="help">help</span>
+            <span class="text-xs font-medium">Support</span>
+        </a>
+    </div>
 </aside>
-
-<main class="pl-64 pt-16 min-h-screen">
-    <div class="max-w-7xl mx-auto p-8">
-        <div class="mb-12">
-            <h1 class="text-4xl font-extrabold tracking-tight mb-2">Welcome to MedGenomics</h1>
-            <p class="text-on-surface-variant max-w-2xl">Precision care clinical atelier — comprehensive genomic data management and patient analysis platform.</p>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-l-4 border-primary">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-3 bg-primary/10 rounded-lg">
-                        <span class="material-symbols-outlined text-primary">group</span>
-                    </div>
-                    <div>
-                        <p class="text-sm text-on-surface-variant font-medium">Active Patients</p>
-                        <h3 class="text-2xl font-bold">1,248</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-l-4 border-secondary">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-3 bg-secondary/10 rounded-lg">
-                        <span class="material-symbols-outlined text-secondary">inventory_2</span>
-                    </div>
-                    <div>
-                        <p class="text-sm text-on-surface-variant font-medium">Supplies</p>
-                        <h3 class="text-2xl font-bold">856</h3>
-                    </div>
-                </div>
-            </div>
-            <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-l-4 border-tertiary">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="p-3 bg-tertiary/10 rounded-lg">
-                        <span class="material-symbols-outlined text-tertiary">analytics</span>
-                    </div>
-                    <div>
-                        <p class="text-sm text-on-surface-variant font-medium">System Health</p>
-                        <h3 class="text-2xl font-bold">99.9%</h3>
-                    </div>
-                </div>
+<!-- Main Canvas -->
+<main class="flex-1 flex flex-col min-w-0">
+    <!-- TopAppBar -->
+    <header class="flex justify-between items-center w-full px-6 py-3 bg-white dark:bg-zinc-900 tonal-shift">
+        <div class="flex items-center gap-4">
+            <div class="relative">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm" data-icon="search">search</span>
+                <input class="bg-zinc-100 dark:bg-zinc-800 border-none rounded-sm py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-emerald-700 focus:ring-opacity-50" placeholder="Search clinical data..." type="text"/>
             </div>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <a href="/patient-pool" class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-lg transition-all group">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold">Patient Pool</h2>
-                    <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">arrow_forward</span>
+        <div class="flex items-center gap-4">
+            <button class="p-2 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors relative">
+                <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+                <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+            </button>
+            <div class="flex items-center gap-3 pl-4 border-l border-zinc-200">
+                <div class="text-right hidden sm:block">
+                    <p class="text-sm font-semibold text-emerald-800">Dr. Sarah Chen</p>
+                    <p class="text-[10px] text-zinc-500 uppercase tracking-wider">Chief Geneticist</p>
                 </div>
-                <p class="text-on-surface-variant text-sm">Browse and manage genomic participant profiles with real-time risk assessments.</p>
-            </a>
-            <a href="/inventory" class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-lg transition-all group">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold">Inventory Management</h2>
-                    <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">arrow_forward</span>
+                <img alt="User profile" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDFcjpy0AHyqbbc-GC9QHb1T0IEq-UcJYhuyz6v_OKbWSw61aU9e1zI0VrBPLMpyHu4RDNmEORXGVpfY4wsvTMjZHbntXEybK7S8GaIYkhS7Vz4E2M0dEXD8liC1K0ql-3EKPKI5jBhpxqBNtTrNORx8yUkeh_YMO6Tmb9PA35VciDQW9anXHwp4BEgIxcVZjfvegPYPhZVXSaNphiEg4g_81hZzttdX4aJ4GP8ZwfDbCKElfr32ZJZP9nYMtljvPQ-HBMrvFGhv1B"/>
+            </div>
+        </div>
+    </header>
+    <!-- Dashboard Content -->
+    <div class="p-8 space-y-8">
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h2 class="text-4xl font-extrabold tracking-tight text-on-surface">Clinical Overview</h2>
+                <p class="text-on-surface-variant mt-1">Real-time surveillance of genomic processing and patient pipelines.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="flex items-center bg-surface-container-low px-4 py-2 rounded-lg gap-3">
+                    <span class="material-symbols-outlined text-zinc-500 text-sm" data-icon="calendar_today">calendar_today</span>
+                    <span class="text-sm font-medium text-on-surface-variant">Today</span>
                 </div>
-                <p class="text-on-surface-variant text-sm">Real-time tracking of clinical supplies, reagents, and laboratory equipment.</p>
-            </a>
-            <a href="/analytics" class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-lg transition-all group">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold">Analytics Dashboard</h2>
-                    <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">arrow_forward</span>
+                <button class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-sm active:scale-95 transition-all">
+                    <span class="material-symbols-outlined text-lg" data-icon="file_download">file_download</span>
+                    Export Report
+                </button>
+            </div>
+        </div>
+        <!-- Section 1: KPI Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Total Patients -->
+            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(0,96,40,0.06)] border-l-4 border-emerald-600">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-emerald-50 rounded-lg">
+                        <span class="material-symbols-outlined text-emerald-700" data-icon="dna">genetics</span>
+                    </div>
+                    <span class="text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-1 rounded">+5%</span>
                 </div>
-                <p class="text-on-surface-variant text-sm">Advanced insights, risk distribution, and treatment efficacy analysis.</p>
-            </a>
-            <a href="/genomic-records" class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-lg transition-all group">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold">Genomic Records</h2>
-                    <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">arrow_forward</span>
+                <p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Total Patients</p>
+                <h3 class="text-2xl font-bold text-on-surface mt-1" id="totalPatients">5</h3>
+            </div>
+            <!-- Total Supplies -->
+            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(0,96,40,0.06)]">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-secondary-fixed text-secondary">
+                        <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+                    </div>
                 </div>
-                <p class="text-on-surface-variant text-sm">Detailed genomic profiles, variant data, and clinical annotations.</p>
-            </a>
+                <p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Total Supplies</p>
+                <h3 class="text-2xl font-bold text-on-surface mt-1" id="totalSupplies">8</h3>
+            </div>
+            <!-- Critical Risk Patients -->
+            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(0,96,40,0.06)]">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-error-container text-error">
+                        <span class="material-symbols-outlined" data-icon="warning">warning</span>
+                    </div>
+                </div>
+                <p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Critical Risk Patients</p>
+                <h3 class="text-2xl font-bold text-on-surface mt-1" id="criticalPatients">2</h3>
+            </div>
+            <!-- Low Stock Items -->
+            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(121,70,0,0.06)] border-l-4 border-tertiary">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-2 bg-tertiary-fixed text-tertiary">
+                        <span class="material-symbols-outlined" data-icon="notification_important">notification_important</span>
+                    </div>
+                    <span class="animate-pulse bg-tertiary text-white text-[10px] px-2 py-1 rounded-full uppercase">Alert</span>
+                </div>
+                <p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Low Stock Items</p>
+                <h3 class="text-2xl font-bold text-on-surface mt-1" id="lowStockItems">2</h3>
+            </div>
+        </div>
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-12 gap-8">
+            <!-- Patient Risk Distribution -->
+            <div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+                <h4 class="text-xl font-bold text-on-surface mb-6">Patient Risk Distribution</h4>
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm font-medium">
+                            <span>Critical (>80%)</span>
+                            <span class="text-error font-bold" id="riskCriticalCount">2 patients</span>
+                        </div>
+                        <div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
+                            <div class="h-full bg-error rounded-full" id="riskCriticalBar" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm font-medium">
+                            <span>Moderate (40-80%)</span>
+                            <span class="text-tertiary font-bold" id="riskModerateCount">2 patients</span>
+                        </div>
+                        <div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
+                            <div class="h-full bg-tertiary rounded-full" id="riskModerateBar" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm font-medium">
+                            <span>Low (<40%)</span>
+                            <span class="text-primary font-bold" id="riskLowCount">1 patient</span>
+                        </div>
+                        <div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
+                            <div class="h-full bg-primary rounded-full" id="riskLowBar" style="width: 20%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Inventory Status -->
+            <div class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+                <h4 class="text-xl font-bold text-on-surface mb-6">Inventory Status</h4>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-primary"></div>
+                            <span class="text-sm">Healthy Stock</span>
+                        </div>
+                        <span class="font-bold" id="healthyStockCount">6</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-tertiary"></div>
+                            <span class="text-sm">Low Stock</span>
+                        </div>
+                        <span class="font-bold" id="lowStockCount">2</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <div class="w-3 h-3 rounded-full bg-error"></div>
+                            <span class="text-sm">Critical Stock</span>
+                        </div>
+                        <span class="font-bold" id="criticalStockCount">0</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Recent Activity -->
+            <div class="col-span-12">
+                <div class="flex items-center justify-between mb-6">
+                    <h4 class="text-xl font-bold text-on-surface">Recent Patient Alerts</h4>
+                    <a href="/patient-pool" class="text-primary text-sm font-bold hover:underline">View All</a>
+                </div>
+                <div class="bg-surface-container-low rounded-xl overflow-hidden">
+                    <div id="alertsContainer" class="divide-y divide-zinc-200/50">
+                        <div class="p-6 text-center text-on-surface-variant">Loading alerts...</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </main>
+<!-- Mobile Nav Bar -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t border-zinc-200 px-6 py-3 flex justify-between items-center z-50">
+    <a class="flex flex-col items-center gap-1 text-emerald-700" href="/">
+        <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+        <span class="text-[10px] font-bold">Dashboard</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/genomic-records">
+        <span class="material-symbols-outlined" data-icon="dna">genetics</span>
+        <span class="text-[10px] font-bold">Genomics</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/patient-pool">
+        <span class="material-symbols-outlined" data-icon="database">database</span>
+        <span class="text-[10px] font-bold">Patients</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/inventory">
+        <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+        <span class="text-[10px] font-bold">Supplies</span>
+    </a>
+</nav>
+
+<script>
+async function loadDashboardData() {
+    try {
+        const [patientsRes, inventoryRes] = await Promise.all([
+            fetch('/api/patients'),
+            fetch('/api/inventory')
+        ]);
+
+        const patients = await patientsRes.json();
+        const inventory = await inventoryRes.json();
+
+        // Update KPI cards
+        document.getElementById('totalPatients').textContent = patients.length;
+        document.getElementById('totalSupplies').textContent = inventory.length;
+
+        // Calculate risk distribution
+        const critical = patients.filter(p => p.risk_score > 80).length;
+        const moderate = patients.filter(p => p.risk_score >= 40 && p.risk_score <= 80).length;
+        const low = patients.filter(p => p.risk_score < 40).length;
+
+        document.getElementById('criticalPatients').textContent = critical;
+        document.getElementById('riskCriticalCount').textContent = `${critical} patients`;
+        document.getElementById('riskModerateCount').textContent = `${moderate} patients`;
+        document.getElementById('riskLowCount').textContent = `${low} patients`;
+
+        const totalPatients = patients.length || 1;
+        document.getElementById('riskCriticalBar').style.width = `${(critical / totalPatients) * 100}%`;
+        document.getElementById('riskModerateBar').style.width = `${(moderate / totalPatients) * 100}%`;
+        document.getElementById('riskLowBar').style.width = `${(low / totalPatients) * 100}%`;
+
+        // Calculate inventory status
+        const healthy = inventory.filter(i => (i.qty_on_hand / i.reorder_point) >= 2).length;
+        const lowStock = inventory.filter(i => {
+            const ratio = i.qty_on_hand / i.reorder_point;
+            return ratio < 2 && ratio >= 1;
+        }).length;
+        const criticalStock = inventory.filter(i => (i.qty_on_hand / i.reorder_point) < 1).length;
+
+        document.getElementById('healthyStockCount').textContent = healthy;
+        document.getElementById('lowStockCount').textContent = lowStock;
+        document.getElementById('criticalStockCount').textContent = criticalStock;
+        document.getElementById('lowStockItems').textContent = lowStock + criticalStock;
+
+        // Load recent alerts
+        const alertsHtml = patients
+            .filter(p => p.risk_score > 80)
+            .slice(0, 3)
+            .map(p => `
+                <div class="flex flex-col md:flex-row md:items-center gap-4 p-6 hover:bg-zinc-50 transition-colors">
+                    <div class="text-xs font-bold text-zinc-400 w-24 shrink-0">High Risk</div>
+                    <div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center shrink-0">
+                        <span class="material-symbols-outlined text-error text-lg">warning</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-semibold text-on-surface">${p.name} - Risk Score: ${p.risk_score}%</p>
+                        <p class="text-xs text-on-surface-variant">ID: ${p.id} • DNA Marker: ${p.dna_marker}</p>
+                    </div>
+                    <div class="bg-error-container px-3 py-1 rounded-full text-[10px] font-bold text-error">CRITICAL</div>
+                </div>
+            `)
+            .join('');
+
+        document.getElementById('alertsContainer').innerHTML = alertsHtml || '<div class="p-6 text-center text-on-surface-variant">No critical alerts</div>';
+    } catch (err) {
+        console.error('Error loading dashboard data:', err);
+    }
+}
+
+loadDashboardData();
+</script>
 </body>
 </html>
