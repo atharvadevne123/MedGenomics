@@ -12,8 +12,7 @@ from datetime import datetime, timedelta
 import os
 import json
 import jwt
-import uuid
-from passlib.context import CryptContext
+import hashlib
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./medgenomics.db")
 
@@ -26,7 +25,6 @@ SECRET_KEY = os.getenv("SECRET_KEY", "medgenomics-secret-key-change-in-productio
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
 app = FastAPI()
@@ -137,10 +135,10 @@ class InventoryUpdate(BaseModel):
 
 # Helper functions
 def hash_password(password: str):
-    return pwd_context.hash(password)
+    return hashlib.sha256(password.encode()).hexdigest()
 
 def verify_password(plain_password: str, hashed_password: str):
-    return pwd_context.verify(plain_password, hashed_password)
+    return hashlib.sha256(plain_password.encode()).hexdigest() == hashed_password
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
