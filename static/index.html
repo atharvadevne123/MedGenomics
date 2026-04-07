@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>MedGenomics | Precision Care Clinical Atelier</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#006028",
+                        "secondary": "#005cba",
+                        "tertiary": "#794600",
+                        "error": "#ba1a1a",
+                        "on-surface": "#1a1c1c",
+                        "surface": "#f9f9f9",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f3f3",
+                        "surface-container": "#eeeeee",
+                        "surface-container-high": "#e8e8e8",
+                        "outline": "#6f7a6e",
+                        "on-surface-variant": "#3f493f"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .bg-primary-gradient {
+            background: linear-gradient(135deg, #006028 0%, #1a7a3a 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased">
+<header class="fixed top-0 w-full z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,96,40,0.06)] flex items-center justify-between px-6 h-16 font-['Manrope'] tracking-tight">
+    <div class="flex items-center gap-8">
+        <span class="text-xl font-bold text-green-900 dark:text-green-50 tracking-tighter">MedGenomics</span>
+        <nav class="hidden md:flex items-center gap-6 text-sm">
+            <div class="flex items-center gap-2 text-slate-400">
+                <span>Dashboard</span>
+                <span class="material-symbols-outlined text-xs">chevron_right</span>
+                <span class="text-green-700 dark:text-green-400 font-semibold border-b-2 border-green-700">Overview</span>
+            </div>
+        </nav>
+    </div>
+    <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-low text-on-surface-variant text-xs font-medium">
+            <span class="material-symbols-outlined text-sm text-primary">sync</span>
+            <span>System Synced</span>
+        </div>
+        <button class="p-2 rounded-full hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
+            <span class="material-symbols-outlined text-slate-500">notifications</span>
+        </button>
+        <button class="p-2 rounded-full hover:bg-slate-100/50 dark:hover:bg-slate-800/50 transition-colors">
+            <span class="material-symbols-outlined text-slate-500">settings</span>
+        </button>
+    </div>
+</header>
+
+<aside class="h-screen w-64 fixed left-0 top-0 bg-slate-50 dark:bg-slate-950 flex flex-col pt-20 pb-4 space-y-2 z-40">
+    <div class="px-6 mb-6">
+        <div class="flex items-center gap-3 p-3 bg-surface-container-lowest rounded-xl shadow-sm">
+            <div class="w-10 h-10 bg-primary-container rounded-lg flex items-center justify-center text-on-primary-container">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">genetics</span>
+            </div>
+            <div>
+                <p class="text-xs font-bold text-primary">Precision Care</p>
+                <p class="text-[10px] text-slate-500">Clinical Atelier</p>
+            </div>
+        </div>
+    </div>
+    <nav class="flex-1 space-y-1">
+        <a class="flex items-center gap-3 py-2.5 px-4 bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-300 rounded-lg mx-2 font-['Manrope'] text-sm font-semibold transition-all hover:translate-x-1" href="/">
+            <span class="material-symbols-outlined">dashboard</span>
+            <span>Dashboard</span>
+        </a>
+        <a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg mx-2 font-['Manrope'] text-sm font-medium transition-all hover:translate-x-1" href="/genomic-records">
+            <span class="material-symbols-outlined">genetics</span>
+            <span>Genomic Records</span>
+        </a>
+        <a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg mx-2 font-['Manrope'] text-sm font-medium transition-all hover:translate-x-1" href="/patient-pool">
+            <span class="material-symbols-outlined">group</span>
+            <span>Patient Pool</span>
+        </a>
+        <a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg mx-2 font-['Manrope'] text-sm font-medium transition-all hover:translate-x-1" href="/inventory">
+            <span class="material-symbols-outlined">inventory_2</span>
+            <span>Inventory</span>
+        </a>
+        <a class="flex items-center gap-3 py-2.5 px-4 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-900 rounded-lg mx-2 font-['Manrope'] text-sm font-medium transition-all hover:translate-x-1" href="/analytics">
+            <span class="material-symbols-outlined">analytics</span>
+            <span>Analytics</span>
+        </a>
+    </nav>
+</aside>
+
+<main class="pl-64 pt-16 min-h-screen">
+    <div class="max-w-7xl mx-auto p-8">
+        <div class="mb-12">
+            <h1 class="text-4xl font-extrabold tracking-tight mb-2">Welcome to MedGenomics</h1>
+            <p class="text-on-surface-variant max-w-2xl">Precision care clinical atelier — comprehensive genomic data management and patient analysis platform.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-l-4 border-primary">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-3 bg-primary/10 rounded-lg">
+                        <span class="material-symbols-outlined text-primary">group</span>
+                    </div>
+                    <div>
+                        <p class="text-sm text-on-surface-variant font-medium">Active Patients</p>
+                        <h3 class="text-2xl font-bold">1,248</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-l-4 border-secondary">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-3 bg-secondary/10 rounded-lg">
+                        <span class="material-symbols-outlined text-secondary">inventory_2</span>
+                    </div>
+                    <div>
+                        <p class="text-sm text-on-surface-variant font-medium">Supplies</p>
+                        <h3 class="text-2xl font-bold">856</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border-l-4 border-tertiary">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-3 bg-tertiary/10 rounded-lg">
+                        <span class="material-symbols-outlined text-tertiary">analytics</span>
+                    </div>
+                    <div>
+                        <p class="text-sm text-on-surface-variant font-medium">System Health</p>
+                        <h3 class="text-2xl font-bold">99.9%</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a href="/patient-pool" class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-lg transition-all group">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold">Patient Pool</h2>
+                    <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">arrow_forward</span>
+                </div>
+                <p class="text-on-surface-variant text-sm">Browse and manage genomic participant profiles with real-time risk assessments.</p>
+            </a>
+            <a href="/inventory" class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-lg transition-all group">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold">Inventory Management</h2>
+                    <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">arrow_forward</span>
+                </div>
+                <p class="text-on-surface-variant text-sm">Real-time tracking of clinical supplies, reagents, and laboratory equipment.</p>
+            </a>
+            <a href="/analytics" class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-lg transition-all group">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold">Analytics Dashboard</h2>
+                    <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">arrow_forward</span>
+                </div>
+                <p class="text-on-surface-variant text-sm">Advanced insights, risk distribution, and treatment efficacy analysis.</p>
+            </a>
+            <a href="/genomic-records" class="bg-surface-container-lowest rounded-xl p-8 hover:shadow-lg transition-all group">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold">Genomic Records</h2>
+                    <span class="material-symbols-outlined text-slate-300 group-hover:text-primary transition-colors">arrow_forward</span>
+                </div>
+                <p class="text-on-surface-variant text-sm">Detailed genomic profiles, variant data, and clinical annotations.</p>
+            </a>
+        </div>
+    </div>
+</main>
+</body>
+</html>
