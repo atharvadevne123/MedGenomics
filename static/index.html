@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html class="light" lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>MedGenomics Clinical Overview</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script id="tailwind-config">
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MedGenomics Clinical Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
         tailwind.config = {
             darkMode: "class",
             theme: {
@@ -76,309 +77,311 @@
             },
         }
     </script>
-    <style>
+<style>
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3, h4 { font-family: 'Manrope', sans-serif; }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
         .tonal-shift { background-color: #f3f3f3; }
+        .glass-card {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(24px);
+        }
     </style>
 </head>
 <body class="bg-background text-on-background min-h-screen flex">
 <!-- SideNavBar Shell -->
 <aside class="hidden md:flex flex-col h-screen w-64 bg-zinc-50 dark:bg-zinc-950 border-r border-zinc-200 dark:border-zinc-800 sticky top-0">
-    <div class="px-6 py-8">
-        <h1 class="text-lg font-black text-emerald-900 dark:text-emerald-100">MedGenomics</h1>
-        <p class="text-xs text-zinc-500 font-medium tracking-wide">Clinical Data Lake</p>
-    </div>
-    <nav class="flex-1 px-4 space-y-1">
-        <a class="flex items-center px-4 py-3 text-emerald-700 dark:text-emerald-300 font-bold border-r-4 border-emerald-700 dark:border-emerald-400 translate-x-1 duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-900" href="/">
-            <span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
-            <span class="text-sm font-medium">Dashboard</span>
-        </a>
-        <a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/genomic-records">
-            <span class="material-symbols-outlined mr-3" data-icon="dna">genetics</span>
-            <span class="text-sm font-medium">Genomic Records</span>
-        </a>
-        <a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/patient-pool">
-            <span class="material-symbols-outlined mr-3" data-icon="database">database</span>
-            <span class="text-sm font-medium">Patient Pool</span>
-        </a>
-        <a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/inventory">
-            <span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>
-            <span class="text-sm font-medium">Inventory</span>
-        </a>
-        <a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/analytics">
-            <span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span>
-            <span class="text-sm font-medium">Analytics</span>
-        </a>
-    </nav>
-    <div class="px-4 py-6 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
-        <a class="flex items-center px-4 py-2 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 hover:bg-zinc-100 transition-colors" href="#">
-            <span class="material-symbols-outlined mr-3 text-lg" data-icon="settings">settings</span>
-            <span class="text-xs font-medium">Settings</span>
-        </a>
-        <a class="flex items-center px-4 py-2 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 hover:bg-zinc-100 transition-colors" href="#">
-            <span class="material-symbols-outlined mr-3 text-lg" data-icon="help">help</span>
-            <span class="text-xs font-medium">Support</span>
-        </a>
-    </div>
+<div class="px-6 py-8">
+<h1 class="text-lg font-black text-emerald-900 dark:text-emerald-100">MedGenomics</h1>
+<p class="text-xs text-zinc-500 font-medium tracking-wide">Clinical Data Lake</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center px-4 py-3 text-emerald-700 dark:text-emerald-300 font-bold border-r-4 border-emerald-700 dark:border-emerald-400 translate-x-1 duration-200 hover:bg-zinc-100 dark:hover:bg-zinc-900" href="/">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/genomic-records">
+<span class="material-symbols-outlined mr-3" data-icon="dna">genetics</span>
+<span class="text-sm font-medium">Genomic Records</span>
+</a>
+<a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/patient-pool">
+<span class="material-symbols-outlined mr-3" data-icon="database">database</span>
+<span class="text-sm font-medium">Patient Pool</span>
+</a>
+<a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/inventory">
+<span class="material-symbols-outlined mr-3" data-icon="inventory_2">inventory_2</span>
+<span class="text-sm font-medium">Inventory</span>
+</a>
+<a class="flex items-center px-4 py-3 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 dark:hover:text-emerald-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors" href="/analytics">
+<span class="material-symbols-outlined mr-3" data-icon="analytics">analytics</span>
+<span class="text-sm font-medium">Analytics</span>
+</a>
+</nav>
+<div class="px-4 py-6 border-t border-zinc-200 dark:border-zinc-800 space-y-1">
+<a class="flex items-center px-4 py-2 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 hover:bg-zinc-100 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="settings">settings</span>
+<span class="text-xs font-medium">Settings</span>
+</a>
+<a class="flex items-center px-4 py-2 text-zinc-600 dark:text-zinc-400 hover:text-emerald-600 hover:bg-zinc-100 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-lg" data-icon="help">help</span>
+<span class="text-xs font-medium">Support</span>
+</a>
+</div>
 </aside>
 <!-- Main Canvas -->
 <main class="flex-1 flex flex-col min-w-0">
-    <!-- TopAppBar -->
-    <header class="flex justify-between items-center w-full px-6 py-3 bg-white dark:bg-zinc-900 tonal-shift">
-        <div class="flex items-center gap-4">
-            <div class="relative">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm" data-icon="search">search</span>
-                <input class="bg-zinc-100 dark:bg-zinc-800 border-none rounded-sm py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-emerald-700 focus:ring-opacity-50" placeholder="Search clinical data..." type="text"/>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <button class="p-2 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors relative">
-                <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-                <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
-            </button>
-            <div class="flex items-center gap-3 pl-4 border-l border-zinc-200">
-                <div class="text-right hidden sm:block">
-                    <p class="text-sm font-semibold text-emerald-800">Dr. Sarah Chen</p>
-                    <p class="text-[10px] text-zinc-500 uppercase tracking-wider">Chief Geneticist</p>
-                </div>
-                <img alt="User profile" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-100" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDFcjpy0AHyqbbc-GC9QHb1T0IEq-UcJYhuyz6v_OKbWSw61aU9e1zI0VrBPLMpyHu4RDNmEORXGVpfY4wsvTMjZHbntXEybK7S8GaIYkhS7Vz4E2M0dEXD8liC1K0ql-3EKPKI5jBhpxqBNtTrNORx8yUkeh_YMO6Tmb9PA35VciDQW9anXHwp4BEgIxcVZjfvegPYPhZVXSaNphiEg4g_81hZzttdX4aJ4GP8ZwfDbCKElfr32ZJZP9nYMtljvPQ-HBMrvFGhv1B"/>
-            </div>
-        </div>
-    </header>
-    <!-- Dashboard Content -->
-    <div class="p-8 space-y-8">
-        <!-- Header Section -->
-        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
-            <div>
-                <h2 class="text-4xl font-extrabold tracking-tight text-on-surface">Clinical Overview</h2>
-                <p class="text-on-surface-variant mt-1">Real-time surveillance of genomic processing and patient pipelines.</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="flex items-center bg-surface-container-low px-4 py-2 rounded-lg gap-3">
-                    <span class="material-symbols-outlined text-zinc-500 text-sm" data-icon="calendar_today">calendar_today</span>
-                    <span class="text-sm font-medium text-on-surface-variant">Today</span>
-                </div>
-                <button class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-sm active:scale-95 transition-all">
-                    <span class="material-symbols-outlined text-lg" data-icon="file_download">file_download</span>
-                    Export Report
-                </button>
-            </div>
-        </div>
-        <!-- Section 1: KPI Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Total Patients -->
-            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(0,96,40,0.06)] border-l-4 border-emerald-600">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-2 bg-emerald-50 rounded-lg">
-                        <span class="material-symbols-outlined text-emerald-700" data-icon="dna">genetics</span>
-                    </div>
-                    <span class="text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-1 rounded">+5%</span>
-                </div>
-                <p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Total Patients</p>
-                <h3 class="text-2xl font-bold text-on-surface mt-1" id="totalPatients">5</h3>
-            </div>
-            <!-- Total Supplies -->
-            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(0,96,40,0.06)]">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-2 bg-secondary-fixed text-secondary">
-                        <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
-                    </div>
-                </div>
-                <p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Total Supplies</p>
-                <h3 class="text-2xl font-bold text-on-surface mt-1" id="totalSupplies">8</h3>
-            </div>
-            <!-- Critical Risk Patients -->
-            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(0,96,40,0.06)]">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-2 bg-error-container text-error">
-                        <span class="material-symbols-outlined" data-icon="warning">warning</span>
-                    </div>
-                </div>
-                <p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Critical Risk Patients</p>
-                <h3 class="text-2xl font-bold text-on-surface mt-1" id="criticalPatients">2</h3>
-            </div>
-            <!-- Low Stock Items -->
-            <div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(121,70,0,0.06)] border-l-4 border-tertiary">
-                <div class="flex justify-between items-start mb-4">
-                    <div class="p-2 bg-tertiary-fixed text-tertiary">
-                        <span class="material-symbols-outlined" data-icon="notification_important">notification_important</span>
-                    </div>
-                    <span class="animate-pulse bg-tertiary text-white text-[10px] px-2 py-1 rounded-full uppercase">Alert</span>
-                </div>
-                <p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Low Stock Items</p>
-                <h3 class="text-2xl font-bold text-on-surface mt-1" id="lowStockItems">2</h3>
-            </div>
-        </div>
-        <!-- Main Dashboard Grid -->
-        <div class="grid grid-cols-12 gap-8">
-            <!-- Patient Risk Distribution -->
-            <div class="col-span-12 lg:col-span-8 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
-                <h4 class="text-xl font-bold text-on-surface mb-6">Patient Risk Distribution</h4>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex justify-between mb-2 text-sm font-medium">
-                            <span>Critical (>80%)</span>
-                            <span class="text-error font-bold" id="riskCriticalCount">2 patients</span>
-                        </div>
-                        <div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
-                            <div class="h-full bg-error rounded-full" id="riskCriticalBar" style="width: 40%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-2 text-sm font-medium">
-                            <span>Moderate (40-80%)</span>
-                            <span class="text-tertiary font-bold" id="riskModerateCount">2 patients</span>
-                        </div>
-                        <div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
-                            <div class="h-full bg-tertiary rounded-full" id="riskModerateBar" style="width: 40%"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="flex justify-between mb-2 text-sm font-medium">
-                            <span>Low (<40%)</span>
-                            <span class="text-primary font-bold" id="riskLowCount">1 patient</span>
-                        </div>
-                        <div class="w-full h-3 bg-surface-container rounded-full overflow-hidden">
-                            <div class="h-full bg-primary rounded-full" id="riskLowBar" style="width: 20%"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Inventory Status -->
-            <div class="col-span-12 lg:col-span-4 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
-                <h4 class="text-xl font-bold text-on-surface mb-6">Inventory Status</h4>
-                <div class="space-y-3">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-primary"></div>
-                            <span class="text-sm">Healthy Stock</span>
-                        </div>
-                        <span class="font-bold" id="healthyStockCount">6</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-tertiary"></div>
-                            <span class="text-sm">Low Stock</span>
-                        </div>
-                        <span class="font-bold" id="lowStockCount">2</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-3 h-3 rounded-full bg-error"></div>
-                            <span class="text-sm">Critical Stock</span>
-                        </div>
-                        <span class="font-bold" id="criticalStockCount">0</span>
-                    </div>
-                </div>
-            </div>
-            <!-- Recent Activity -->
-            <div class="col-span-12">
-                <div class="flex items-center justify-between mb-6">
-                    <h4 class="text-xl font-bold text-on-surface">Recent Patient Alerts</h4>
-                    <a href="/patient-pool" class="text-primary text-sm font-bold hover:underline">View All</a>
-                </div>
-                <div class="bg-surface-container-low rounded-xl overflow-hidden">
-                    <div id="alertsContainer" class="divide-y divide-zinc-200/50">
-                        <div class="p-6 text-center text-on-surface-variant">Loading alerts...</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<!-- TopAppBar -->
+<header class="flex justify-between items-center w-full px-6 py-3 bg-white dark:bg-zinc-900 tonal-shift">
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm" data-icon="search">search</span>
+<input class="bg-zinc-100 dark:bg-zinc-800 border-none rounded-sm py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-emerald-700 focus:ring-opacity-50" placeholder="Search clinical data..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-zinc-200">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-semibold text-emerald-800">Dr. Sarah Chen</p>
+<p class="text-[10px] text-zinc-500 uppercase tracking-wider">Chief Geneticist</p>
+</div>
+<img alt="User profile" class="w-10 h-10 rounded-full object-cover border-2 border-emerald-100" data-alt="professional portrait of a female doctor in a clinical setting with soft natural lighting and medical background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDFcjpy0AHyqbbc-GC9QHb1T0IEq-UcJYhuyz6v_OKbWSw61aU9e1zI0VrBPLMpyHu4RDNmEORXGVpfY4wsvTMjZHbntXEybK7S8GaIYkhS7Vz4E2M0dEXD8liC1K0ql-3EKPKI5jBhpxqBNtTrNORx8yUkeh_YMO6Tmb9PA35VciDQW9anXHwp4BEgIxcVZjfvegPYPhZVXSaNphiEg4g_81hZzttdX4aJ4GP8ZwfDbCKElfr32ZJZP9nYMtljvPQ-HBMrvFGhv1B"/>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="p-8 space-y-8">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-4xl font-extrabold tracking-tight text-on-surface">Clinical Overview</h2>
+<p class="text-on-surface-variant mt-1">Real-time surveillance of genomic processing and patient pipelines.</p>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-lg gap-3">
+<span class="material-symbols-outlined text-zinc-500 text-sm" data-icon="calendar_today">calendar_today</span>
+<span class="text-sm font-medium text-on-surface-variant">Oct 12, 2023 - Oct 19, 2023</span>
+</div>
+<button class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-sm active:scale-95 transition-all">
+<span class="material-symbols-outlined text-lg" data-icon="file_download">file_download</span>
+                        Export Report
+                    </button>
+</div>
+</div>
+<!-- Section 1: KPI Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Total Sequences -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(0,96,40,0.06)] border-l-4 border-emerald-600">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-emerald-50 rounded-lg">
+<span class="material-symbols-outlined text-emerald-700" data-icon="dna">genetics</span>
+</div>
+<span class="text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-1 rounded">+12.5%</span>
+</div>
+<p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Total Ingested Sequences</p>
+<h3 class="text-2xl font-bold text-on-surface mt-1">1,284,502</h3>
+</div>
+<!-- Active Trials -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(0,96,40,0.06)]">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-secondary-fixed text-secondary">
+<span class="material-symbols-outlined" data-icon="clinical_notes">clinical_notes</span>
+</div>
+</div>
+<p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Active Clinical Trials</p>
+<h3 class="text-2xl font-bold text-on-surface mt-1">42</h3>
+</div>
+<!-- System Uptime -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(0,96,40,0.06)]">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-blue-50 text-blue-600">
+<span class="material-symbols-outlined" data-icon="speed">speed</span>
+</div>
+</div>
+<p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">System Uptime</p>
+<h3 class="text-2xl font-bold text-on-surface mt-1">99.9%</h3>
+</div>
+<!-- Urgent Notifications -->
+<div class="bg-surface-container-lowest p-6 rounded-xl shadow-[0_32px_64px_-12px_rgba(121,70,0,0.06)] border-l-4 border-tertiary">
+<div class="flex justify-between items-start mb-4">
+<div class="p-2 bg-tertiary-fixed text-tertiary">
+<span class="material-symbols-outlined" data-icon="notification_important">notification_important</span>
+</div>
+<span class="animate-pulse bg-tertiary text-white text-[10px] px-2 py-1 rounded-full uppercase">Action Required</span>
+</div>
+<p class="text-zinc-500 text-xs font-semibold uppercase tracking-widest">Urgent Notifications</p>
+<h3 class="text-2xl font-bold text-on-surface mt-1">07</h3>
+</div>
+</div>
+<!-- Main Dashboard Grid -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Section 2: System Health & Data Ingestion (Line Chart Placeholder) -->
+<div class="col-span-12 lg:col-span-8 bg-surface-container-low rounded-xl p-8 relative overflow-hidden flex flex-col">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h4 class="text-xl font-bold text-on-surface">System Health &amp; Data Ingestion</h4>
+<p class="text-sm text-on-surface-variant">Real-time throughput of the genomic clinical lake</p>
+</div>
+<div class="flex gap-2">
+<span class="flex items-center gap-1.5 text-xs font-medium text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full">
+<span class="w-1.5 h-1.5 bg-emerald-600 rounded-full"></span> Active Flow
+                            </span>
+</div>
+</div>
+<!-- Asymmetric Chart Visual -->
+<div class="flex-1 flex items-end justify-between gap-2 h-64 mt-4">
+<div class="w-full h-full relative">
+<!-- Visual representation of a line chart using SVG for precision -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 400">
+<path d="M0,350 Q100,320 200,360 T400,280 T600,310 T800,150 T1000,200" fill="none" stroke="#1a7a3a" stroke-linecap="round" stroke-width="4"></path>
+<path d="M0,350 Q100,320 200,360 T400,280 T600,310 T800,150 T1000,200 L1000,400 L0,400 Z" fill="url(#gradient-flow)" opacity="0.1"></path>
+<defs>
+<lineargradient id="gradient-flow" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#006028"></stop>
+<stop offset="100%" stop-color="transparent"></stop>
+</lineargradient>
+</defs>
+<!-- Chart Points -->
+<circle cx="200" cy="360" fill="#006028" r="4"></circle>
+<circle cx="400" cy="280" fill="#006028" r="4"></circle>
+<circle cx="800" cy="150" fill="#006028" r="4"></circle>
+</svg>
+<!-- Grid lines -->
+<div class="absolute inset-0 grid grid-rows-4 pointer-events-none">
+<div class="border-t border-zinc-200/50"></div>
+<div class="border-t border-zinc-200/50"></div>
+<div class="border-t border-zinc-200/50"></div>
+<div class="border-t border-zinc-200/50"></div>
+</div>
+</div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] text-zinc-400 font-bold uppercase tracking-widest">
+<span>08:00 AM</span>
+<span>11:00 AM</span>
+<span>02:00 PM</span>
+<span>05:00 PM</span>
+<span>08:00 PM</span>
+</div>
+</div>
+<!-- Section 4: Alerts & Quick Actions -->
+<div class="col-span-12 lg:col-span-4 space-y-6">
+<h4 class="text-xl font-bold text-on-surface">Alerts &amp; Quick Actions</h4>
+<div class="space-y-4">
+<!-- Alert 1 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center gap-4 group hover:ring-2 hover:ring-tertiary/20 transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-lg bg-tertiary-fixed flex items-center justify-center text-tertiary shrink-0">
+<span class="material-symbols-outlined" data-icon="inventory">inventory</span>
+</div>
+<div class="min-w-0">
+<p class="text-sm font-bold text-on-surface truncate">Low Inventory: Genomic Kits</p>
+<p class="text-xs text-on-surface-variant">5 units remaining in stock</p>
+</div>
+<span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-tertiary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Alert 2 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center gap-4 group hover:ring-2 hover:ring-error/20 transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-lg bg-error-container flex items-center justify-center text-error shrink-0">
+<span class="material-symbols-outlined" data-icon="group_work">group_work</span>
+</div>
+<div class="min-w-0">
+<p class="text-sm font-bold text-on-surface truncate">3 Critical Risk Patients</p>
+<p class="text-xs text-on-surface-variant">Abnormal genomic variant detected</p>
+</div>
+<span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-error transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+<!-- Alert 3 -->
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center gap-4 group hover:ring-2 hover:ring-secondary/20 transition-all cursor-pointer">
+<div class="w-12 h-12 rounded-lg bg-secondary-fixed flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+</div>
+<div class="min-w-0">
+<p class="text-sm font-bold text-on-surface truncate">Pending Approvals</p>
+<p class="text-xs text-on-surface-variant">8 sequences awaiting verification</p>
+</div>
+<span class="material-symbols-outlined ml-auto text-zinc-300 group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+<!-- Quick Actions CTA -->
+<div class="p-6 rounded-xl bg-gradient-to-br from-emerald-800 to-emerald-950 text-white shadow-lg">
+<p class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2">New Sequence</p>
+<h5 class="text-lg font-bold mb-4">Initialize genomic ingest flow for new patient.</h5>
+<button class="w-full py-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-sm font-bold backdrop-blur-sm transition-all">
+                            Launch Ingest Wizard
+                        </button>
+</div>
+</div>
+<!-- Section 3: Recent Clinical Activity -->
+<div class="col-span-12">
+<div class="flex items-center justify-between mb-6">
+<h4 class="text-xl font-bold text-on-surface">Recent Clinical Activity</h4>
+<button class="text-primary text-sm font-bold hover:underline">View All Logs</button>
+</div>
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<div class="divide-y divide-zinc-200/50">
+<!-- Activity 1 -->
+<div class="flex flex-col md:flex-row md:items-center gap-4 p-6 hover:bg-zinc-100 transition-colors">
+<div class="text-xs font-bold text-zinc-400 w-24 shrink-0">12:42 PM</div>
+<div class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-emerald-700 text-lg" data-icon="person_add">person_add</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold text-on-surface">New Genomic Profile Created for Patient #129</p>
+<p class="text-xs text-on-surface-variant">Primary Investigator: Dr. Aris Thorne • Oncology Dept.</p>
+</div>
+<div class="bg-surface-container-lowest px-3 py-1 rounded-full text-[10px] font-bold text-emerald-800 border border-emerald-100">SUCCESS</div>
+</div>
+<!-- Activity 2 -->
+<div class="flex flex-col md:flex-row md:items-center gap-4 p-6 hover:bg-zinc-100 transition-colors">
+<div class="text-xs font-bold text-zinc-400 w-24 shrink-0">11:15 AM</div>
+<div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-blue-700 text-lg" data-icon="biotech">biotech</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold text-on-surface">Sequence Analysis Complete for Ward B</p>
+<p class="text-xs text-on-surface-variant">Batch #4492 processed via AWS Genomics Cluster</p>
+</div>
+<div class="bg-surface-container-lowest px-3 py-1 rounded-full text-[10px] font-bold text-blue-800 border border-blue-100">COMPLETED</div>
+</div>
+<!-- Activity 3 -->
+<div class="flex flex-col md:flex-row md:items-center gap-4 p-6 hover:bg-zinc-100 transition-colors">
+<div class="text-xs font-bold text-zinc-400 w-24 shrink-0">09:30 AM</div>
+<div class="w-10 h-10 rounded-full bg-zinc-200 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-zinc-600 text-lg" data-icon="sync">sync</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-semibold text-on-surface">External Database Sync Initiated</p>
+<p class="text-xs text-on-surface-variant">Connecting with ClinVar for latest variant annotations</p>
+</div>
+<div class="bg-surface-container-lowest px-3 py-1 rounded-full text-[10px] font-bold text-zinc-600 border border-zinc-200">IN PROGRESS</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </main>
 <!-- Mobile Nav Bar -->
 <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t border-zinc-200 px-6 py-3 flex justify-between items-center z-50">
-    <a class="flex flex-col items-center gap-1 text-emerald-700" href="/">
-        <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
-        <span class="text-[10px] font-bold">Dashboard</span>
-    </a>
-    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/genomic-records">
-        <span class="material-symbols-outlined" data-icon="dna">genetics</span>
-        <span class="text-[10px] font-bold">Genomics</span>
-    </a>
-    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/patient-pool">
-        <span class="material-symbols-outlined" data-icon="database">database</span>
-        <span class="text-[10px] font-bold">Patients</span>
-    </a>
-    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/inventory">
-        <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
-        <span class="text-[10px] font-bold">Supplies</span>
-    </a>
+<a class="flex flex-col items-center gap-1 text-emerald-700" href="/">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-[10px] font-bold">Dashboard</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-zinc-400" href="/genomic-records">
+<span class="material-symbols-outlined" data-icon="dna">genetics</span>
+<span class="text-[10px] font-bold">Genomics</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-zinc-400" href="/patient-pool">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+<span class="text-[10px] font-bold">Patients</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-zinc-400" href="/inventory">
+<span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+<span class="text-[10px] font-bold">Supplies</span>
+</a>
 </nav>
-
-<script>
-async function loadDashboardData() {
-    try {
-        const [patientsRes, inventoryRes] = await Promise.all([
-            fetch('/api/patients'),
-            fetch('/api/inventory')
-        ]);
-
-        const patients = await patientsRes.json();
-        const inventory = await inventoryRes.json();
-
-        // Update KPI cards
-        document.getElementById('totalPatients').textContent = patients.length;
-        document.getElementById('totalSupplies').textContent = inventory.length;
-
-        // Calculate risk distribution
-        const critical = patients.filter(p => p.risk_score > 80).length;
-        const moderate = patients.filter(p => p.risk_score >= 40 && p.risk_score <= 80).length;
-        const low = patients.filter(p => p.risk_score < 40).length;
-
-        document.getElementById('criticalPatients').textContent = critical;
-        document.getElementById('riskCriticalCount').textContent = `${critical} patients`;
-        document.getElementById('riskModerateCount').textContent = `${moderate} patients`;
-        document.getElementById('riskLowCount').textContent = `${low} patients`;
-
-        const totalPatients = patients.length || 1;
-        document.getElementById('riskCriticalBar').style.width = `${(critical / totalPatients) * 100}%`;
-        document.getElementById('riskModerateBar').style.width = `${(moderate / totalPatients) * 100}%`;
-        document.getElementById('riskLowBar').style.width = `${(low / totalPatients) * 100}%`;
-
-        // Calculate inventory status
-        const healthy = inventory.filter(i => (i.qty_on_hand / i.reorder_point) >= 2).length;
-        const lowStock = inventory.filter(i => {
-            const ratio = i.qty_on_hand / i.reorder_point;
-            return ratio < 2 && ratio >= 1;
-        }).length;
-        const criticalStock = inventory.filter(i => (i.qty_on_hand / i.reorder_point) < 1).length;
-
-        document.getElementById('healthyStockCount').textContent = healthy;
-        document.getElementById('lowStockCount').textContent = lowStock;
-        document.getElementById('criticalStockCount').textContent = criticalStock;
-        document.getElementById('lowStockItems').textContent = lowStock + criticalStock;
-
-        // Load recent alerts
-        const alertsHtml = patients
-            .filter(p => p.risk_score > 80)
-            .slice(0, 3)
-            .map(p => `
-                <div class="flex flex-col md:flex-row md:items-center gap-4 p-6 hover:bg-zinc-50 transition-colors">
-                    <div class="text-xs font-bold text-zinc-400 w-24 shrink-0">High Risk</div>
-                    <div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center shrink-0">
-                        <span class="material-symbols-outlined text-error text-lg">warning</span>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-sm font-semibold text-on-surface">${p.name} - Risk Score: ${p.risk_score}%</p>
-                        <p class="text-xs text-on-surface-variant">ID: ${p.id} • DNA Marker: ${p.dna_marker}</p>
-                    </div>
-                    <div class="bg-error-container px-3 py-1 rounded-full text-[10px] font-bold text-error">CRITICAL</div>
-                </div>
-            `)
-            .join('');
-
-        document.getElementById('alertsContainer').innerHTML = alertsHtml || '<div class="p-6 text-center text-on-surface-variant">No critical alerts</div>';
-    } catch (err) {
-        console.error('Error loading dashboard data:', err);
-    }
-}
-
-loadDashboardData();
-</script>
-</body>
-</html>
+</body></html>

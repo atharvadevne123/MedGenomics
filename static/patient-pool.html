@@ -96,7 +96,7 @@
                 <h2 class="text-3xl font-extrabold tracking-tight">Patient Pool</h2>
                 <p class="text-on-surface-variant">Database of active genomic participant profiles with real-time risk assessments.</p>
             </div>
-            <button class="flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all">
+            <button onclick="document.getElementById('patientModal').classList.remove('hidden')" class="flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all">
                 <span class="material-symbols-outlined">person_add</span>
                 <span>Add New Patient</span>
             </button>
@@ -104,19 +104,14 @@
 
         <div class="bg-surface-container-low rounded-2xl p-6 mb-8">
             <div class="flex gap-4 mb-6">
-                <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary flex-1">
-                    <option>All Ages</option>
-                    <option>18 - 35</option>
-                    <option>36 - 60</option>
-                    <option>60+</option>
+                <input type="text" id="searchInput" placeholder="Search by name, ID, or DNA marker..." class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary flex-1 outline-none"/>
+                <select id="riskFilter" class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
+                    <option value="">All Risk Levels</option>
+                    <option value="high">High (>80%)</option>
+                    <option value="moderate">Moderate (40-80%)</option>
+                    <option value="low">Low (<40%)</option>
                 </select>
-                <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary flex-1">
-                    <option>All Risk Levels</option>
-                    <option>High (>80%)</option>
-                    <option>Moderate (40-80%)</option>
-                    <option>Low (<40%)</option>
-                </select>
-                <button class="px-4 py-2 bg-white rounded-lg text-sm font-bold hover:bg-slate-50">Clear filters</button>
+                <button onclick="clearFilters()" class="px-4 py-2 bg-white rounded-lg text-sm font-bold hover:bg-slate-50">Clear filters</button>
             </div>
         </div>
 
@@ -135,12 +130,22 @@
 </main>
 
 <script>
+let allPatients = [];
+
 async function loadPatients() {
     try {
         const response = await fetch('/api/patients');
-        const patients = await response.json();
+        allPatients = await response.json();
 
-        const patientListHtml = patients.map(p => {
+        renderPatientList(allPatients);
+    } catch (err) {
+        console.error('Error loading patients:', err);
+        document.getElementById('patientDetailView').innerHTML = '<p class="text-center text-error">Error loading patients</p>';
+    }
+}
+
+function renderPatientList(patients) {
+    const patientListHtml = patients.map(p => {
             const riskColor = p.risk_score > 80 ? 'error' : p.risk_score > 40 ? 'tertiary' : 'primary';
             const riskLabel = p.risk_score > 80 ? 'CRITICAL' : p.risk_score > 40 ? 'MODERATE' : 'LOW';
 
@@ -180,12 +185,44 @@ async function loadPatients() {
             `;
         }).join('');
 
-        document.getElementById('patientDetailView').innerHTML = patientListHtml || '<p class="text-center text-on-surface-variant">No patients found</p>';
-    } catch (err) {
-        console.error('Error loading patients:', err);
-        document.getElementById('patientDetailView').innerHTML = '<p class="text-center text-error">Error loading patients</p>';
-    }
+    document.getElementById('patientDetailView').innerHTML = patientListHtml || '<p class="text-center text-on-surface-variant">No patients found</p>';
 }
+
+function searchAndFilter() {
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const riskFilter = document.getElementById('riskFilter').value;
+
+    let filtered = allPatients;
+
+    if (query) {
+        filtered = filtered.filter(p =>
+            p.name.toLowerCase().includes(query) ||
+            p.id.toLowerCase().includes(query) ||
+            p.dna_marker.toLowerCase().includes(query)
+        );
+    }
+
+    if (riskFilter) {
+        if (riskFilter === 'high') {
+            filtered = filtered.filter(p => p.risk_score > 80);
+        } else if (riskFilter === 'moderate') {
+            filtered = filtered.filter(p => p.risk_score >= 40 && p.risk_score <= 80);
+        } else if (riskFilter === 'low') {
+            filtered = filtered.filter(p => p.risk_score < 40);
+        }
+    }
+
+    renderPatientList(filtered);
+}
+
+function clearFilters() {
+    document.getElementById('searchInput').value = '';
+    document.getElementById('riskFilter').value = '';
+    renderPatientList(allPatients);
+}
+
+document.getElementById('searchInput').addEventListener('input', searchAndFilter);
+document.getElementById('riskFilter').addEventListener('change', searchAndFilter);
 
 function showPatientDetails(patientId, patientData) {
     const conditionsHtml = Object.entries(patientData.conditions || {})
@@ -254,14 +291,131 @@ function showPatientDetails(patientId, patientData) {
             </div>
 
             <div class="pt-4 border-t border-surface-container flex gap-2">
-                <button class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90">Edit</button>
-                <button class="flex-1 py-2 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high">View Details</button>
+                <button class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90" onclick="editPatient('${patientData.id}', ${JSON.stringify(patientData).replace(/"/g, '&quot;')})">Edit</button>
+                <button class="flex-1 py-2 bg-red-600 text-white font-bold rounded-lg text-sm hover:bg-red-700" onclick="deletePatient('${patientData.id}')">Delete</button>
             </div>
         </div>
     `;
 }
 
+function editPatient(patientId, patientData) {
+    document.getElementById('modalTitle').textContent = 'Edit Patient';
+    document.getElementById('patientId').value = patientId;
+    document.getElementById('patientName').value = patientData.name;
+    document.getElementById('patientAge').value = patientData.age;
+    document.getElementById('patientRisk').value = patientData.risk_score;
+    document.getElementById('patientDNA').value = patientData.dna_marker;
+    document.getElementById('patientInitials').value = patientData.initials;
+    document.getElementById('patientForm').dataset.editing = 'true';
+    document.getElementById('patientModal').classList.remove('hidden');
+}
+
+async function deletePatient(patientId) {
+    if (!confirm('Are you sure you want to delete this patient?')) return;
+
+    const token = localStorage.getItem('token');
+    try {
+        const response = await fetch(`/api/patients/${patientId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) throw new Error('Failed to delete patient');
+        loadPatients();
+        document.getElementById('patientDetailsPanel').innerHTML = '<p class="text-center text-on-surface-variant">Select a patient to view details</p>';
+    } catch (err) {
+        alert('Error deleting patient: ' + err.message);
+    }
+}
+
+document.getElementById('patientForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem('token');
+    const patientId = document.getElementById('patientId').value;
+    const isEditing = document.getElementById('patientForm').dataset.editing === 'true';
+
+    const data = {
+        name: document.getElementById('patientName').value,
+        age: parseInt(document.getElementById('patientAge').value),
+        risk_score: parseFloat(document.getElementById('patientRisk').value),
+        dna_marker: document.getElementById('patientDNA').value,
+        initials: document.getElementById('patientInitials').value,
+        conditions: {},
+        genomic_data: {}
+    };
+
+    try {
+        const url = isEditing ? `/api/patients/${patientId}` : '/api/patients';
+        const method = isEditing ? 'PUT' : 'POST';
+
+        const response = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) throw new Error('Failed to save patient');
+
+        document.getElementById('patientModal').classList.add('hidden');
+        document.getElementById('patientForm').reset();
+        document.getElementById('patientForm').dataset.editing = 'false';
+        loadPatients();
+    } catch (err) {
+        alert('Error: ' + err.message);
+    }
+});
+
+function closePatientModal() {
+    document.getElementById('patientModal').classList.add('hidden');
+    document.getElementById('patientForm').reset();
+    document.getElementById('patientForm').dataset.editing = 'false';
+}
+
 loadPatients();
 </script>
+
+<!-- Patient Create/Edit Modal -->
+<div id="patientModal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-surface-container-lowest rounded-xl max-w-md w-full shadow-xl">
+        <div class="border-b border-surface-container px-6 py-4 flex items-center justify-between">
+            <h2 id="modalTitle" class="text-lg font-bold">Add New Patient</h2>
+            <button onclick="closePatientModal()" class="text-on-surface-variant hover:text-on-surface">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+        </div>
+        <form id="patientForm" class="p-6 space-y-4">
+            <input type="hidden" id="patientId" />
+            <div>
+                <label class="block text-sm font-bold text-on-surface-variant mb-1">Name</label>
+                <input type="text" id="patientName" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-bold text-on-surface-variant mb-1">Age</label>
+                    <input type="number" id="patientAge" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-on-surface-variant mb-1">Initials</label>
+                    <input type="text" id="patientInitials" maxlength="2" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface-variant mb-1">Risk Score (%)</label>
+                <input type="number" id="patientRisk" min="0" max="100" step="0.1" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+            </div>
+            <div>
+                <label class="block text-sm font-bold text-on-surface-variant mb-1">DNA Marker</label>
+                <input type="text" id="patientDNA" required class="w-full bg-surface-container rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"/>
+            </div>
+            <div class="flex gap-2 pt-4">
+                <button type="submit" class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90">Save</button>
+                <button type="button" onclick="closePatientModal()" class="flex-1 py-2 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>

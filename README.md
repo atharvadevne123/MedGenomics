@@ -8,20 +8,45 @@ MedGenomics is a full-stack healthcare data lake application built with FastAPI,
 
 ## ✨ Features
 
-### Patient Management
-- **10,000 unique patient records** with comprehensive genomic data
-- Patient search and filtering by name
-- Filter by treatment status (Active, Monitoring, Completed)
-- Filter by risk level (High Risk patients)
-- Sort by name or risk score
-- Detailed patient modal with treatment information
+### 🔐 Authentication System (NEW!)
+- **User Registration**: Create new user accounts with email validation
+- **User Login**: Secure login with JWT token authentication
+- **JWT Tokens**: 24-hour token expiration with role-based access control
+- **Role-Based Access**: Support for admin, doctor, lab_tech, and viewer roles
+- **Secure Password Hashing**: SHA256 password encryption
+- **Protected Endpoints**: CRUD operations require valid JWT tokens
 
-### Supply Management
-- **8,000 medical supply items** with inventory tracking
-- Real-time stock status (Critical/OK)
-- Cost tracking and total value calculations
-- Supplier and location information
-- Automatic reorder point alerts
+### Patient Management
+- **10,000+ patient records** with comprehensive genomic data
+- **Create Patient**: Add new patient records with modal form
+- **Read Patient**: View all patients or get individual patient details
+- **Update Patient**: Edit patient information (name, age, risk score, DNA marker, conditions, genomic data)
+- **Delete Patient**: Remove patient records from database
+- **Patient Search**: Real-time search by patient name, ID, or DNA marker
+- **Risk Level Filtering**: Filter patients by risk level (High >80%, Moderate 40-80%, Low <40%)
+- **Detailed patient modals** with treatment information and genomic data
+- Patient database model with `created_at` and `updated_at` timestamps
+
+### Supply/Inventory Management
+- **8,000+ medical supply items** with real-time inventory tracking
+- **Create Supply**: Add new supply items with category, quantity, cost, supplier
+- **Read Supply**: View all inventory items or get individual item details
+- **Update Supply**: Edit supply information (name, category, quantity, reorder point, location, supplier)
+- **Delete Supply**: Remove inventory items from database
+- **Inventory Search**: Real-time search by item name, supplier, or location
+- **Stock Status Filtering**: Filter by stock level (Critical <50%, Low 50-150%, Healthy >150%)
+- **Real-time stock status** (Critical/Low/Healthy) with color-coded indicators
+- **Cost tracking** and total inventory value calculations
+- **Reorder Point Alerts**: Automatic alerts when stock falls below threshold
+- Inventory database model with `created_at` and `updated_at` timestamps
+
+### Search & Filter Functionality
+- **Patient Pool Search**: Search by name, ID, or DNA marker with instant results
+- **Patient Risk Filtering**: Filter by risk level categories
+- **Inventory Search**: Search supplies by name, supplier, or category
+- **Inventory Status Filtering**: Filter by stock status (Critical/Low/Healthy)
+- **Real-time Updates**: Filters update instantly as you type
+- **Filter Reset**: Clear all filters with one click
 
 ### Analytics Dashboard
 - **Real-time KPI statistics**
@@ -55,7 +80,7 @@ MedGenomics/
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Docker & Docker Compose
+- Docker & Docker Compose (or Python 3.11+ with pip)
 - Git
 - Mac/Linux (or WSL on Windows)
 
@@ -67,25 +92,53 @@ git clone https://github.com/atharvadevne123/MedGenomics.git
 cd MedGenomics
 ```
 
-2. **Start the application**
+2. **Start the application (Docker)**
 ```bash
 docker compose up -d
 sleep 20
 ```
 
-3. **Access the dashboard**
+3. **Or Start locally (Python)**
 ```bash
-open http://10.0.0.223:8000
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start the server
+uvicorn src.main:app --host 0.0.0.0 --port 8000
 ```
-Or navigate to `http://localhost:8000` in your browser
+
+4. **Access the application**
+```bash
+# Login page
+open http://localhost:8000/login
+
+# Or registration
+open http://localhost:8000/register
+```
+
+### Default Test Credentials
+After starting the application, you can register a new account via:
+- **Login Page**: `http://localhost:8000/login` - Sign in with existing credentials
+- **Register Page**: `http://localhost:8000/register` - Create a new account
 
 ### Verify Installation
 ```bash
-# Check containers are running
-docker compose ps
-
-# Verify API health
+# Check API health
 curl http://localhost:8000/health
+
+# Test user registration
+curl -X POST http://localhost:8000/api/register \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","email":"test@example.com","password":"test123"}'
+
+# Test user login
+curl -X POST http://localhost:8000/api/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"testuser","password":"test123"}'
 ```
 
 ## 📊 Database Schema
@@ -118,30 +171,84 @@ curl http://localhost:8000/health
 
 ## 🔧 API Endpoints
 
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/register` | Register new user account |
+| POST | `/api/login` | Login and get JWT token |
+
+### Patient Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/patients` | Retrieve all patients (10,000+ records) |
+| POST | `/api/patients` | Create new patient (requires auth) |
+| GET | `/api/patients/{patient_id}` | Get specific patient details |
+| PUT | `/api/patients/{patient_id}` | Update patient information (requires auth) |
+| DELETE | `/api/patients/{patient_id}` | Delete patient record (requires auth) |
+| GET | `/api/patients/search` | Search patients by query, risk level |
+
+### Supply/Inventory Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/inventory` | Retrieve all inventory items (8,000+ records) |
+| POST | `/api/inventory` | Create new supply item (requires auth) |
+| GET | `/api/inventory/{item_id}` | Get specific inventory item details |
+| PUT | `/api/inventory/{item_id}` | Update inventory item (requires auth) |
+| DELETE | `/api/inventory/{item_id}` | Delete inventory item (requires auth) |
+| GET | `/api/inventory/search` | Search inventory by query, category, status |
+
+### Health & Status
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/health` | API health check |
-| GET | `/patients` | Retrieve all patients (10,000 records) |
-| GET | `/inventory` | Retrieve all supplies (8,000 records) |
-| POST | `/patients` | Create/update patient record |
-| POST | `/inventory` | Create/update supply record |
 
 ## 📱 Dashboard Features
 
-### Dashboard View
-- **Search Bar**: Real-time patient search by name
-- **Filter Buttons**: All Patients, Active Treatment, High Risk
-- **Sort Options**: By Name or Risk Score
-- **Two-Column Folder Layout**: 
-  - Left: Patient records (scrollable)
-  - Right: Supply inventory (scrollable)
-- **Card Details**: Click any card to view full details in modal
+### Login & Registration Pages (NEW!)
+- **Login Page** (`/login`): Secure user authentication with JWT tokens
+- **Registration Page** (`/register`): Create new user accounts
+- **Session Management**: Automatic token storage and validation
+- **Error Handling**: Clear error messages for failed login/registration
+
+### Dashboard View (Clinical Overview)
+- **KPI Cards**: Key metrics dashboard
+- **System Health**: Real-time status monitoring
+- **Alerts Panel**: Important notifications and alerts
+- **Activity Timeline**: Recent system activities
+
+### Patient Pool View
+- **Patient Search Bar**: Real-time search by name, ID, or DNA marker
+- **Risk Level Filter**: Filter by High (>80%), Moderate (40-80%), or Low (<40%)
+- **Patient Cards**: Display patient information with risk indicators
+- **Patient Details Panel**: Click to view comprehensive patient information
+- **Add New Patient Button**: Modal form to create new patient records
+- **Edit Patient**: In-place editing with modal form
+- **Delete Patient**: Remove patient records with confirmation
+
+### Inventory Pool View
+- **Inventory Search**: Real-time search by item name, supplier, or location
+- **Category Filter**: Filter by Kits, Reagents, or Equipment
+- **Stock Status Filter**: Filter by Critical, Low, or Healthy stock levels
+- **Low Stock Alert**: Real-time count of items below reorder point
+- **Supply Cards**: Display inventory with stock level visualization
+- **Supply Details Panel**: Click to view complete inventory information including pricing
+- **Add New Supply Button**: Modal form to create new inventory items
+- **Edit Supply**: In-place editing with modal form
+- **Delete Supply**: Remove inventory items with confirmation
+- **Cost Tracking**: Total value calculations per item
 
 ### Analytics View
 - **4 KPI Cards**: Key metrics overview
 - **Conditions Chart**: Top 8 conditions by prevalence
 - **Risk Distribution**: Pie-style bar chart (Low/Med/High)
 - **Real-time Calculations**: Updates based on current data
+
+### Genomic Records View
+- **Records Table**: Complete genomic data for all patients
+- **Patient ID**: Unique patient identifier
+- **Gene Information**: Gene and variant data
+- **Risk Level**: Color-coded risk indicators
+- **Status**: Current patient status (Active/Critical)
 
 ### Export
 - Export all patient data to CSV
@@ -191,15 +298,33 @@ Supplies include:
 - **Search**: Real-time filtering <100ms
 - **Database**: PostgreSQL with JSONB indexing
 
-## 🔐 Security Notes
+## 🔐 Security Features
 
-This is a development/demo application. For production:
-- Enable authentication (JWT/OAuth)
-- Use environment variables for DB credentials
-- Implement HTTPS/TLS
-- Add rate limiting
-- Implement input validation
-- Use prepared statements (already done via SQLAlchemy)
+### Authentication & Authorization
+- **JWT Tokens**: JSON Web Tokens with 24-hour expiration
+- **Password Hashing**: SHA256 encryption for password security
+- **HTTPBearer Scheme**: Secure token validation on protected endpoints
+- **Role-Based Access Control**: Multiple user roles (admin, doctor, lab_tech, viewer)
+- **Token Validation**: Automatic token verification on CRUD operations
+
+### Protected Endpoints
+The following endpoints require valid JWT authentication:
+- `POST /api/patients` - Create patient
+- `PUT /api/patients/{patient_id}` - Update patient
+- `DELETE /api/patients/{patient_id}` - Delete patient
+- `POST /api/inventory` - Create inventory item
+- `PUT /api/inventory/{item_id}` - Update inventory item
+- `DELETE /api/inventory/{item_id}` - Delete inventory item
+
+### Additional Security Recommendations for Production
+- Use environment variables for database credentials
+- Implement HTTPS/TLS encryption
+- Add rate limiting to prevent abuse
+- Implement additional input validation
+- Use stronger password hashing (bcrypt/argon2 with salt)
+- Add CORS restrictions to trusted origins only
+- Implement audit logging for all data modifications
+- Use prepared statements (already done via SQLAlchemy ORM)
 
 ## 📝 Environment Variables
 
@@ -245,15 +370,25 @@ docker compose exec -T postgres psql -U admin -d medgenomics -c "SELECT COUNT(*)
 
 ## 📚 Project Structure
 ```
-/src
-  └── main.py           # FastAPI app, models, routes
-/static
-  └── dashboard.html    # Complete frontend (CSS + JS included)
-/scripts
-  └── bulk_seed.py      # Data seeding utilities
-docker-compose.yml      # Service orchestration
-Dockerfile             # Image definition
-requirements.txt       # Python packages
+MedGenomics/
+├── src/
+│   └── main.py                    # FastAPI app with authentication, CRUD operations
+├── static/
+│   ├── index.html                 # Dashboard - Clinical Overview
+│   ├── patient-pool.html          # Patient management with CRUD modals
+│   ├── inventory.html             # Inventory management with CRUD modals
+│   ├── analytics.html             # Analytics and KPI dashboard
+│   ├── genomic-records.html       # Genomic data records table
+│   ├── login.html                 # User login page (NEW!)
+│   └── register.html              # User registration page (NEW!)
+├── venv/                          # Python virtual environment
+├── docker-compose.yml             # Service orchestration
+├── Dockerfile                     # Image definition
+├── .gitignore                     # Git ignore rules
+├── requirements.txt               # Python packages
+├── README.md                      # This file
+└── scripts/
+    └── bulk_seed.py               # Data seeding utilities
 ```
 
 ## 🚢 Deployment
@@ -306,6 +441,22 @@ For issues, questions, or suggestions:
 
 ---
 
-**Last Updated**: March 2026
+**Last Updated**: April 2026
 **Status**: ✅ Active Development
-**Version**: 1.0.0
+**Version**: 2.0.0
+
+## 🎉 Latest Release (v2.0.0) - April 2026
+
+### New Features
+- ✅ **Full Authentication System** with JWT tokens and role-based access control
+- ✅ **Patient CRUD Operations** - Create, Read, Update, Delete patient records
+- ✅ **Inventory CRUD Operations** - Complete supply management with modals
+- ✅ **Advanced Search & Filters** - Real-time filtering for both patients and inventory
+- ✅ **Login & Registration Pages** - Secure user account management
+- ✅ **Token-Protected API Endpoints** - Secure all CRUD operations
+
+### Fixed Issues
+- Improved password security with SHA256 hashing
+- Enhanced UI/UX with modal forms for data entry
+- Real-time filter updates without page reload
+- Better error handling and validation
