@@ -1,13 +1,21 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine, Column, String, Integer, Float, JSON
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from sqlalchemy import create_engine, Column, String, Integer, Float, JSON, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 from pydantic import BaseModel
+from datetime import datetime
 import os
 import csv
 import io
+import json
+import hashlib
+import hmac
+import base64
+import time
+import uuid
 
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./medgenomics.db")
 
@@ -18,7 +26,11 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-app = FastAPI(title="MedGenomics API")
+# Security config
+SECRET_KEY = os.getenv("SECRET_KEY", "medgenomics-secret-key-change-in-production")
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
+
+security = HTTPBearer(auto_error=False)
 
 # Restrict CORS to trusted origins only.
 # Never use allow_origins=["*"] together with allow_credentials=True.
@@ -27,12 +39,14 @@ ALLOWED_ORIGINS = os.getenv(
     "http://localhost:8000,http://127.0.0.1:8000",
 ).split(",")
 
+app = FastAPI(title="MedGenomics API")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
     allow_credentials=False,
-    allow_methods=["GET", "POST", "PUT"],
-    allow_headers=["Content-Type"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 
@@ -46,6 +60,16 @@ def get_db():
 
 # ── ORM models ────────────────────────────────────────────────────────────────
 
+class User(Base):
+    __tablename__ = "users"
+    id = Column(String, primary_key=True)
+    username = Column(String, unique=True, index=True)
+    email = Column(String, unique=True, index=True)
+    hashed_password = Column(String)
+    role = Column(String, default="user")
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+
 class Patient(Base):
     __tablename__ = "patients"
     id = Column(String, primary_key=True)
@@ -56,6 +80,8 @@ class Patient(Base):
     initials = Column(String)
     conditions = Column(JSON)
     genomic_data = Column(JSON)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class Inventory(Base):
@@ -68,12 +94,87 @@ class Inventory(Base):
     cost = Column(Float)
     location = Column(String)
     supplier = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 Base.metadata.create_all(bind=engine)
 
 
-# ── Pydantic schemas ──────────────────────────────────────────────────────────
+# ── Auth helpers ───────────────────────────────────────────────────────────────
+
+def hash_password(password: str) -> str:
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    return hashlib.sha256(plain_password.encode()).hexdigest() == hashed_password
+
+
+def create_access_token(data: dict) -> str:
+    payload = data.copy()
+    payload["exp"] = int(time.time()) + ACCESS_TOKEN_EXPIRE_MINUTES * 60
+    payload_b64 = base64.urlsafe_b64encode(json.dumps(payload).encode()).decode()
+    sig = hmac.new(SECRET_KEY.encode(), payload_b64.encode(), hashlib.sha256).hexdigest()
+    return f"{payload_b64}.{sig}"
+
+
+def verify_token(credentials: HTTPAuthorizationCredentials) -> dict:
+    if credentials is None:
+        raise HTTPException(status_code=401, detail="Authorization required")
+    try:
+        token = credentials.credentials
+        payload_b64, sig = token.rsplit(".", 1)
+        expected_sig = hmac.new(SECRET_KEY.encode(), payload_b64.encode(), hashlib.sha256).hexdigest()
+        if not hmac.compare_digest(sig, expected_sig):
+            raise HTTPException(status_code=401, detail="Invalid token")
+        payload = json.loads(base64.urlsafe_b64decode(payload_b64 + "=="))
+        if payload.get("exp", 0) < int(time.time()):
+            raise HTTPException(status_code=401, detail="Token expired")
+        return payload
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+# ── Pydantic schemas ───────────────────────────────────────────────────────────
+
+class UserRegister(BaseModel):
+    username: str
+    email: str
+    password: str
+
+
+class UserLogin(BaseModel):
+    username: str
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: dict
+
+
+class PatientCreate(BaseModel):
+    name: str
+    age: int
+    risk_score: float
+    dna_marker: str
+    initials: str
+    conditions: dict = {}
+    genomic_data: dict = {}
+
+
+class PatientUpdate(BaseModel):
+    name: str = None
+    age: int = None
+    risk_score: float = None
+    dna_marker: str = None
+    conditions: dict = None
+    genomic_data: dict = None
+
 
 class PatientResponse(BaseModel):
     id: str
@@ -87,6 +188,30 @@ class PatientResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class InventoryCreate(BaseModel):
+    item_name: str
+    category: str
+    qty_on_hand: int
+    reorder_point: int
+    cost: float
+    location: str
+    supplier: str
+
+
+class InventoryUpdate(BaseModel):
+    item_name: str = None
+    category: str = None
+    qty_on_hand: int = None
+    reorder_point: int = None
+    cost: float = None
+    location: str = None
+    supplier: str = None
+
+
+class InventoryAdjust(BaseModel):
+    qty_on_hand: int
 
 
 class InventoryResponse(BaseModel):
@@ -103,22 +228,7 @@ class InventoryResponse(BaseModel):
         from_attributes = True
 
 
-class PatientCreate(BaseModel):
-    id: str
-    name: str
-    age: int
-    risk_score: float
-    dna_marker: str
-    initials: str
-    conditions: dict = {}
-    genomic_data: dict = {}
-
-
-class InventoryAdjust(BaseModel):
-    qty_on_hand: int
-
-
-# ── Seed data ─────────────────────────────────────────────────────────────────
+# ── Seed data ──────────────────────────────────────────────────────────────────
 
 def seed_data(db: Session) -> None:
     """Populate tables with sample data when they are empty."""
@@ -215,12 +325,28 @@ def on_startup() -> None:
         db.close()
 
 
-# ── Page routes ───────────────────────────────────────────────────────────────
+# ── Page routes ────────────────────────────────────────────────────────────────
 
 @app.get("/")
 async def root():
     try:
         return FileResponse("static/index.html", media_type="text/html")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Page not found")
+
+
+@app.get("/login")
+async def login_page():
+    try:
+        return FileResponse("static/login.html", media_type="text/html")
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="Page not found")
+
+
+@app.get("/register")
+async def register_page():
+    try:
+        return FileResponse("static/register.html", media_type="text/html")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="Page not found")
 
@@ -257,12 +383,58 @@ async def genomic_records():
         raise HTTPException(status_code=404, detail="Page not found")
 
 
-# ── API routes ────────────────────────────────────────────────────────────────
+# ── API routes ─────────────────────────────────────────────────────────────────
 
 @app.get("/health")
 def health():
     return {"status": "healthy"}
 
+
+# Auth endpoints
+
+@app.post("/api/register", response_model=TokenResponse)
+def register(user_data: UserRegister, db: Session = Depends(get_db)):
+    existing_user = db.query(User).filter(
+        (User.username == user_data.username) | (User.email == user_data.email)
+    ).first()
+    if existing_user:
+        raise HTTPException(status_code=400, detail="User already exists")
+
+    user_id = str(uuid.uuid4())
+    user = User(
+        id=user_id,
+        username=user_data.username,
+        email=user_data.email,
+        hashed_password=hash_password(user_data.password),
+        role="viewer",
+    )
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+
+    access_token = create_access_token(data={"sub": user.username})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {"id": user.id, "username": user.username, "email": user.email, "role": user.role},
+    }
+
+
+@app.post("/api/login", response_model=TokenResponse)
+def login(user_data: UserLogin, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == user_data.username).first()
+    if not user or not verify_password(user_data.password, user.hashed_password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    access_token = create_access_token(data={"sub": user.username})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {"id": user.id, "username": user.username, "email": user.email, "role": user.role},
+    }
+
+
+# Patient endpoints — /search must be declared before /{patient_id}
 
 @app.get("/api/patients", response_model=list[PatientResponse])
 def get_patients(db: Session = Depends(get_db)):
@@ -274,10 +446,18 @@ def get_patients(db: Session = Depends(get_db)):
 
 @app.post("/api/patients", response_model=PatientResponse, status_code=201)
 def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
-    if db.query(Patient).filter(Patient.id == patient.id).first():
-        raise HTTPException(status_code=409, detail="Patient ID already exists")
     try:
-        db_patient = Patient(**patient.model_dump())
+        patient_id = f"MG-{uuid.uuid4().hex[:4].upper()}-{uuid.uuid4().hex[:1].upper()}"
+        db_patient = Patient(
+            id=patient_id,
+            name=patient.name,
+            age=patient.age,
+            risk_score=patient.risk_score,
+            dna_marker=patient.dna_marker,
+            initials=patient.initials,
+            conditions=patient.conditions,
+            genomic_data=patient.genomic_data,
+        )
         db.add(db_patient)
         db.commit()
         db.refresh(db_patient)
@@ -287,12 +467,121 @@ def create_patient(patient: PatientCreate, db: Session = Depends(get_db)):
         raise HTTPException(status_code=500, detail="Failed to create patient")
 
 
+@app.get("/api/patients/search", response_model=list[PatientResponse])
+def search_patients(
+    query: str = "",
+    risk_min: float = 0,
+    risk_max: float = 100,
+    db: Session = Depends(get_db),
+):
+    patients = db.query(Patient).all()
+    patients = [p for p in patients if risk_min <= p.risk_score <= risk_max]
+    if query:
+        query_lower = query.lower()
+        patients = [p for p in patients if
+                    query_lower in p.name.lower() or
+                    query_lower in p.id.lower() or
+                    query_lower in p.dna_marker.lower()]
+    return patients
+
+
+@app.get("/api/patients/{patient_id}", response_model=PatientResponse)
+def get_patient(patient_id: str, db: Session = Depends(get_db)):
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    return patient
+
+
+@app.put("/api/patients/{patient_id}", response_model=PatientResponse)
+def update_patient(
+    patient_id: str,
+    patient_data: PatientUpdate,
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    verify_token(credentials)
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    if patient_data.name is not None:
+        patient.name = patient_data.name
+    if patient_data.age is not None:
+        patient.age = patient_data.age
+    if patient_data.risk_score is not None:
+        patient.risk_score = patient_data.risk_score
+    if patient_data.dna_marker is not None:
+        patient.dna_marker = patient_data.dna_marker
+    if patient_data.conditions is not None:
+        patient.conditions = patient_data.conditions
+    if patient_data.genomic_data is not None:
+        patient.genomic_data = patient_data.genomic_data
+    db.commit()
+    db.refresh(patient)
+    return patient
+
+
+@app.delete("/api/patients/{patient_id}")
+def delete_patient(
+    patient_id: str,
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    verify_token(credentials)
+    patient = db.query(Patient).filter(Patient.id == patient_id).first()
+    if not patient:
+        raise HTTPException(status_code=404, detail="Patient not found")
+    db.delete(patient)
+    db.commit()
+    return {"message": "Patient deleted successfully"}
+
+
+# Inventory endpoints — /search must be declared before /{item_id}
+
 @app.get("/api/inventory", response_model=list[InventoryResponse])
 def get_inventory(db: Session = Depends(get_db)):
     try:
         return db.query(Inventory).all()
     except Exception:
         raise HTTPException(status_code=500, detail="Failed to fetch inventory")
+
+
+@app.post("/api/inventory", response_model=InventoryResponse)
+def create_inventory(
+    inventory_data: InventoryCreate,
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    verify_token(credentials)
+    item_id = f"INV-{str(db.query(Inventory).count() + 1).zfill(3)}"
+    item = Inventory(
+        id=item_id,
+        item_name=inventory_data.item_name,
+        category=inventory_data.category,
+        qty_on_hand=inventory_data.qty_on_hand,
+        reorder_point=inventory_data.reorder_point,
+        cost=inventory_data.cost,
+        location=inventory_data.location,
+        supplier=inventory_data.supplier,
+    )
+    db.add(item)
+    db.commit()
+    db.refresh(item)
+    return item
+
+
+@app.get("/api/inventory/search", response_model=list[InventoryResponse])
+def search_inventory(query: str = "", category: str = "", db: Session = Depends(get_db)):
+    items = db.query(Inventory).all()
+    if category:
+        items = [i for i in items if i.category.lower() == category.lower()]
+    if query:
+        query_lower = query.lower()
+        items = [i for i in items if
+                 query_lower in i.item_name.lower() or
+                 query_lower in i.id.lower() or
+                 query_lower in i.supplier.lower()]
+    return items
 
 
 @app.put("/api/inventory/{item_id}/adjust", response_model=InventoryResponse)
@@ -309,6 +598,61 @@ def adjust_inventory(item_id: str, adjustment: InventoryAdjust, db: Session = De
         db.rollback()
         raise HTTPException(status_code=500, detail="Failed to adjust stock")
 
+
+@app.get("/api/inventory/{item_id}", response_model=InventoryResponse)
+def get_inventory_item(item_id: str, db: Session = Depends(get_db)):
+    item = db.query(Inventory).filter(Inventory.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
+
+
+@app.put("/api/inventory/{item_id}", response_model=InventoryResponse)
+def update_inventory(
+    item_id: str,
+    inventory_data: InventoryUpdate,
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    verify_token(credentials)
+    item = db.query(Inventory).filter(Inventory.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    if inventory_data.item_name is not None:
+        item.item_name = inventory_data.item_name
+    if inventory_data.category is not None:
+        item.category = inventory_data.category
+    if inventory_data.qty_on_hand is not None:
+        item.qty_on_hand = inventory_data.qty_on_hand
+    if inventory_data.reorder_point is not None:
+        item.reorder_point = inventory_data.reorder_point
+    if inventory_data.cost is not None:
+        item.cost = inventory_data.cost
+    if inventory_data.location is not None:
+        item.location = inventory_data.location
+    if inventory_data.supplier is not None:
+        item.supplier = inventory_data.supplier
+    db.commit()
+    db.refresh(item)
+    return item
+
+
+@app.delete("/api/inventory/{item_id}")
+def delete_inventory(
+    item_id: str,
+    db: Session = Depends(get_db),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    verify_token(credentials)
+    item = db.query(Inventory).filter(Inventory.id == item_id).first()
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    db.delete(item)
+    db.commit()
+    return {"message": "Item deleted successfully"}
+
+
+# Export endpoints
 
 @app.get("/api/export/report")
 def export_report(db: Session = Depends(get_db)):
