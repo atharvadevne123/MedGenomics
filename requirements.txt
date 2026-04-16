@@ -16,9 +16,7 @@ psycopg2-binary==2.9.9   # PostgreSQL driver
 pydantic==2.5.0
 pydantic-settings==2.1.0
 
-# API & CORS
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
+# Environment / config
 python-dotenv==1.0.0
 httpx==0.25.0
 

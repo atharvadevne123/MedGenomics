@@ -50,11 +50,68 @@
     </style>
 </head>
 <body class="bg-surface text-on-surface flex min-h-screen">
+
+<!-- Toast notification -->
+<div id="toast" class="hidden fixed bottom-6 right-6 z-[100] text-white px-4 py-3 rounded-xl shadow-xl text-sm font-medium max-w-sm" role="alert" aria-live="polite"></div>
+
+<!-- Order Supplies Modal -->
+<div id="orderModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="orderModalTitle">
+    <div class="bg-white rounded-xl p-8 max-w-md w-full shadow-2xl">
+        <h2 id="orderModalTitle" class="text-xl font-bold mb-6">Order Supplies</h2>
+        <form id="orderForm" class="space-y-4" novalidate>
+            <div>
+                <label for="orderItem" class="block text-sm font-medium text-on-surface-variant mb-1">Item Name</label>
+                <input id="orderItem" type="text" required placeholder="Item name or catalog number"
+                    class="w-full bg-surface-container-low border border-surface-container-high rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="orderQty" class="block text-sm font-medium text-on-surface-variant mb-1">Quantity</label>
+                    <input id="orderQty" type="number" required min="1" placeholder="50"
+                        class="w-full bg-surface-container-low border border-surface-container-high rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                </div>
+                <div>
+                    <label for="orderSupplier" class="block text-sm font-medium text-on-surface-variant mb-1">Supplier</label>
+                    <input id="orderSupplier" type="text" required placeholder="Supplier name"
+                        class="w-full bg-surface-container-low border border-surface-container-high rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                </div>
+            </div>
+            <p id="orderError" class="text-sm text-error hidden" role="alert"></p>
+            <div class="flex gap-3 pt-2">
+                <button type="submit" class="flex-1 py-2.5 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90 transition-colors">Place Order</button>
+                <button type="button" onclick="closeOrderModal()" class="flex-1 py-2.5 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high transition-colors">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Adjust Stock Modal -->
+<div id="adjustModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="adjustModalTitle">
+    <div class="bg-white rounded-xl p-8 max-w-sm w-full shadow-2xl">
+        <h2 id="adjustModalTitle" class="text-xl font-bold mb-1">Adjust Stock</h2>
+        <p id="adjustItemName" class="text-sm text-on-surface-variant mb-6"></p>
+        <form id="adjustForm" class="space-y-4" novalidate>
+            <input type="hidden" id="adjustingItemId">
+            <div>
+                <label for="adjustQty" class="block text-sm font-medium text-on-surface-variant mb-1">New Quantity on Hand</label>
+                <input id="adjustQty" type="number" required min="0" placeholder="Enter new quantity"
+                    class="w-full bg-surface-container-low border border-surface-container-high rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+            </div>
+            <p id="adjustError" class="text-sm text-error hidden" role="alert"></p>
+            <div class="flex gap-3 pt-2">
+                <button type="submit" class="flex-1 py-2.5 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90 transition-colors">Update Stock</button>
+                <button type="button" onclick="closeAdjustModal()" class="flex-1 py-2.5 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high transition-colors">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Sidebar -->
 <aside class="hidden xl:flex h-screen w-64 fixed left-0 top-0 bg-slate-50 flex-col pt-20 py-4 z-40">
     <div class="px-6 mb-6">
         <div class="flex items-center gap-3 py-4">
             <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl text-white">
-                <span class="material-symbols-outlined">genetics</span>
+                <span class="material-symbols-outlined" aria-hidden="true">genetics</span>
             </div>
             <div>
                 <h3 class="text-sm font-bold text-on-surface">Precision Care</h3>
@@ -62,30 +119,34 @@
             </div>
         </div>
     </div>
-    <nav class="flex-1 space-y-1 px-2">
-        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all" href="/">
-            <span class="material-symbols-outlined">dashboard</span>
+    <nav class="flex-1 space-y-1 px-2" aria-label="Main navigation">
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/">
+            <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
             <span class="text-sm font-medium">Dashboard</span>
         </a>
-        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all" href="/patient-pool">
-            <span class="material-symbols-outlined">group</span>
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/genomic-records">
+            <span class="material-symbols-outlined" aria-hidden="true">genetics</span>
+            <span class="text-sm font-medium">Genomic Records</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/patient-pool">
+            <span class="material-symbols-outlined" aria-hidden="true">group</span>
             <span class="text-sm font-medium">Patient Pool</span>
         </a>
-        <a class="flex items-center gap-3 px-4 py-3 bg-green-50 text-green-800 rounded-lg" href="/inventory">
-            <span class="material-symbols-outlined">inventory_2</span>
+        <a class="flex items-center gap-3 px-4 py-3 bg-green-50 text-green-800 rounded-lg" href="/inventory" aria-current="page">
+            <span class="material-symbols-outlined" aria-hidden="true">inventory_2</span>
             <span class="text-sm font-medium">Inventory</span>
         </a>
-        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all" href="/analytics">
-            <span class="material-symbols-outlined">analytics</span>
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/analytics">
+            <span class="material-symbols-outlined" aria-hidden="true">analytics</span>
             <span class="text-sm font-medium">Analytics</span>
         </a>
     </nav>
 </aside>
 
-<main class="xl:pl-64 pt-16 min-h-screen w-full">
+<main class="xl:pl-64 pt-16 min-h-screen w-full pb-20 xl:pb-0">
     <header class="bg-white/80 backdrop-blur-xl fixed top-0 w-full z-50 h-16 flex items-center px-6">
-        <a href="/" class="flex items-center gap-2 text-green-900 font-bold hover:text-green-700">
-            <span class="material-symbols-outlined">arrow_back</span>
+        <a href="/" class="flex items-center gap-2 text-green-900 font-bold hover:text-green-700" aria-label="Back to Dashboard">
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
         </a>
         <h1 class="ml-4 text-xl font-bold">Inventory</h1>
     </header>
@@ -96,41 +157,50 @@
                 <h2 class="text-3xl font-extrabold tracking-tight">Inventory Pool</h2>
                 <p class="text-on-surface-variant">Real-time management of clinical supplies and laboratory hardware.</p>
             </div>
-            <button class="flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-lg shadow-lg hover:shadow-xl active:scale-95 transition-all">
-                <span class="material-symbols-outlined">shopping_cart</span>
+            <button onclick="openOrderModal()" class="flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-lg shadow-lg hover:shadow-xl active:scale-95 transition-all">
+                <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
                 <span>Order Supplies</span>
             </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-            <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
-                <option>All Supplies</option>
-                <option>Kits</option>
-                <option>Reagents</option>
-                <option>Equipment</option>
-            </select>
-            <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
-                <option>All Status</option>
-                <option>Critical (<10%)</option>
-                <option>Low (<25%)</option>
-                <option>Healthy</option>
-            </select>
-            <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary">
-                <option>Global Providers</option>
-            </select>
+            <div>
+                <label for="categoryFilter" class="block text-xs font-medium text-on-surface-variant mb-1">Category</label>
+                <select id="categoryFilter" class="w-full bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary" onchange="applyFilters()">
+                    <option value="">All Supplies</option>
+                    <option value="Kits">Kits</option>
+                    <option value="Reagents">Reagents</option>
+                    <option value="Equipment">Equipment</option>
+                </select>
+            </div>
+            <div>
+                <label for="statusFilter" class="block text-xs font-medium text-on-surface-variant mb-1">Stock Status</label>
+                <select id="statusFilter" class="w-full bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary" onchange="applyFilters()">
+                    <option value="">All Status</option>
+                    <option value="critical">Critical (&lt;50% of reorder)</option>
+                    <option value="low">Low (&lt;150% of reorder)</option>
+                    <option value="healthy">Healthy</option>
+                </select>
+            </div>
+            <div class="flex items-end">
+                <button onclick="clearFilters()" class="px-4 py-2 bg-white rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">Clear filters</button>
+            </div>
             <div class="bg-primary/5 p-4 rounded-lg border border-primary/10 flex items-center gap-2">
-                <span class="text-2xl font-bold text-primary" id="lowStockAlert">0</span>
-                <p class="text-xs font-bold text-primary/70">Low Stock</p>
+                <span class="text-2xl font-bold text-primary" id="lowStockAlert" aria-live="polite">0</span>
+                <p class="text-xs font-bold text-primary/70">Low Stock Items</p>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div id="inventoryGridView" class="lg:col-span-2 grid gap-6">
-                <!-- Inventory items will be populated here -->
+            <div id="inventoryGridView" class="lg:col-span-2 grid gap-6" aria-live="polite" aria-label="Inventory items">
+                <div class="col-span-full space-y-4">
+                    <div class="animate-pulse bg-surface-container-lowest rounded-xl p-6 h-44"></div>
+                    <div class="animate-pulse bg-surface-container-lowest rounded-xl p-6 h-44"></div>
+                </div>
             </div>
 
             <div class="lg:col-span-1">
-                <div id="supplyDetailsPanel" class="bg-surface-container-lowest rounded-xl p-6 shadow-sm sticky top-24">
+                <div id="supplyDetailsPanel" class="bg-surface-container-lowest rounded-xl p-6 shadow-sm sticky top-24" tabindex="-1" aria-live="polite" aria-label="Supply details">
                     <p class="text-center text-on-surface-variant">Select a supply to view details</p>
                 </div>
             </div>
@@ -138,127 +208,179 @@
     </div>
 </main>
 
+<!-- Mobile nav -->
+<nav class="xl:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-zinc-200 px-4 py-3 flex justify-between items-center z-50" aria-label="Mobile navigation">
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/">
+        <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
+        <span class="text-[10px] font-bold">Dashboard</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/genomic-records">
+        <span class="material-symbols-outlined" aria-hidden="true">genetics</span>
+        <span class="text-[10px] font-bold">Genomics</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/patient-pool">
+        <span class="material-symbols-outlined" aria-hidden="true">group</span>
+        <span class="text-[10px] font-bold">Patients</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-green-700" href="/inventory" aria-current="page">
+        <span class="material-symbols-outlined" aria-hidden="true">inventory_2</span>
+        <span class="text-[10px] font-bold">Supplies</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/analytics">
+        <span class="material-symbols-outlined" aria-hidden="true">analytics</span>
+        <span class="text-[10px] font-bold">Analytics</span>
+    </a>
+</nav>
+
 <script>
+// ── Utilities ──────────────────────────────────────────────────────────────────
+function escapeHtml(str) {
+    return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+// Returns hex color values for a stock ratio — avoids dynamic Tailwind class names
+// (Tailwind requires all class names to be statically present at build time)
+function getStatusStyles(ratio) {
+    if (ratio < 0.5) return { border: '#ba1a1a', badgeBg: '#ffdad6', badgeText: '#ba1a1a', bar: '#ba1a1a', text: '#ba1a1a', label: 'CRITICAL' };
+    if (ratio < 1.5) return { border: '#794600', badgeBg: '#fef0e0', badgeText: '#794600', bar: '#794600', text: '#794600', label: 'LOW' };
+    return { border: '#006028', badgeBg: '#e8f5ec', badgeText: '#006028', bar: '#006028', text: '#006028', label: 'HEALTHY' };
+}
+
+function showToast(message, isError = false) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.backgroundColor = isError ? '#ba1a1a' : '#1a1c1c';
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 3500);
+}
+
+// ── Data store — eliminates passing raw JSON through onclick attributes (XSS risk) ──
+const inventoryStore = new Map();
+let allItems = [];
+
+// ── Load inventory ─────────────────────────────────────────────────────────────
 async function loadInventory() {
     try {
         const response = await fetch('/api/inventory');
-        const items = await response.json();
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        allItems = await response.json();
+        allItems.forEach(i => inventoryStore.set(i.id, i));
 
-        // Count low stock items
-        const lowStockCount = items.filter(i => {
-            const ratio = i.qty_on_hand / i.reorder_point;
-            return ratio < 1.5;
-        }).length;
+        const lowStockCount = allItems.filter(i => (i.qty_on_hand / i.reorder_point) < 1.5).length;
         document.getElementById('lowStockAlert').textContent = lowStockCount;
 
-        const inventoryHtml = items.map(item => {
-            const ratio = item.qty_on_hand / item.reorder_point;
-            let status = 'healthy';
-            let statusColor = 'primary';
-
-            if (ratio < 0.5) {
-                status = 'CRITICAL';
-                statusColor = 'error';
-            } else if (ratio < 1.5) {
-                status = 'LOW';
-                statusColor = 'tertiary';
-            } else {
-                status = 'HEALTHY';
-                statusColor = 'primary';
-            }
-
-            const percentage = Math.min((ratio / 2) * 100, 100);
-
-            return `
-                <div class="bg-surface-container-lowest rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer border-l-4 border-${statusColor}"
-                     onclick="showSupplyDetails('${item.id}', ${JSON.stringify(item).replace(/"/g, '&quot;')})">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <h3 class="text-lg font-bold text-on-surface">${item.item_name}</h3>
-                            <p class="text-xs text-on-surface-variant mt-1">Supplier: ${item.supplier}</p>
-                        </div>
-                        <span class="px-3 py-1 bg-${statusColor}-container text-${statusColor} text-[10px] font-bold rounded whitespace-nowrap">
-                            ${status}
-                        </span>
-                    </div>
-
-                    <div class="space-y-3 mt-4 pt-4 border-t border-surface-container">
-                        <div>
-                            <div class="flex justify-between mb-2 text-sm">
-                                <span class="text-on-surface-variant">Stock Level</span>
-                                <span class="font-bold">${item.qty_on_hand} / ${item.reorder_point} Units</span>
-                            </div>
-                            <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
-                                <div class="h-full bg-${statusColor} rounded-full" style="width: ${percentage}%"></div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-3 gap-2">
-                            <div class="text-center">
-                                <p class="text-[10px] uppercase text-on-surface-variant font-bold">Category</p>
-                                <p class="text-xs font-bold text-on-surface mt-1">${item.category}</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-[10px] uppercase text-on-surface-variant font-bold">Unit Cost</p>
-                                <p class="text-xs font-bold text-on-surface mt-1">$${item.cost.toFixed(2)}</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-[10px] uppercase text-on-surface-variant font-bold">Location</p>
-                                <p class="text-xs font-bold text-on-surface mt-1">${item.location}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        document.getElementById('inventoryGridView').innerHTML = inventoryHtml || '<p class="text-center text-on-surface-variant col-span-full">No supplies found</p>';
+        renderInventory(allItems);
     } catch (err) {
         console.error('Error loading inventory:', err);
-        document.getElementById('inventoryGridView').innerHTML = '<p class="text-center text-error col-span-full">Error loading inventory</p>';
+        document.getElementById('inventoryGridView').innerHTML =
+            '<p class="text-center text-error col-span-full py-8">Failed to load inventory. Please refresh the page.</p>';
     }
 }
 
-function showSupplyDetails(supplyId, supplyData) {
-    const ratio = supplyData.qty_on_hand / supplyData.reorder_point;
-    let status = 'HEALTHY';
-    let statusColor = 'primary';
-
-    if (ratio < 0.5) {
-        status = 'CRITICAL';
-        statusColor = 'error';
-    } else if (ratio < 1.5) {
-        status = 'LOW';
-        statusColor = 'tertiary';
+function renderInventory(items) {
+    if (!items.length) {
+        document.getElementById('inventoryGridView').innerHTML =
+            '<p class="text-center text-on-surface-variant col-span-full py-8">No items match the selected filters.</p>';
+        return;
     }
 
-    const totalValue = supplyData.qty_on_hand * supplyData.cost;
-    const percentage = Math.min((ratio / 2) * 100, 100);
+    const html = items.map(item => {
+        const ratio = item.qty_on_hand / item.reorder_point;
+        const s = getStatusStyles(ratio);
+        const percentage = Math.min((ratio / 2) * 100, 100);
+        return `
+            <div class="bg-surface-container-lowest rounded-xl p-6 hover:shadow-lg transition-all cursor-pointer border-l-4"
+                 style="border-left-color: ${s.border}"
+                 role="button"
+                 tabindex="0"
+                 aria-label="View details for ${escapeHtml(item.item_name)}"
+                 onclick="showSupplyDetails('${escapeHtml(item.id)}')"
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showSupplyDetails('${escapeHtml(item.id)}');}">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-on-surface">${escapeHtml(item.item_name)}</h3>
+                        <p class="text-xs text-on-surface-variant mt-1">Supplier: ${escapeHtml(item.supplier)}</p>
+                    </div>
+                    <span class="px-3 py-1 text-[10px] font-bold rounded whitespace-nowrap ml-2"
+                          style="background-color: ${s.badgeBg}; color: ${s.badgeText}">
+                        ${s.label}
+                    </span>
+                </div>
+                <div class="space-y-3 mt-4 pt-4 border-t border-surface-container">
+                    <div>
+                        <div class="flex justify-between mb-2 text-sm">
+                            <span class="text-on-surface-variant">Stock Level</span>
+                            <span class="font-bold">${escapeHtml(String(item.qty_on_hand))} / ${escapeHtml(String(item.reorder_point))} Units</span>
+                        </div>
+                        <div class="w-full h-2 bg-surface-container rounded-full overflow-hidden"
+                             role="progressbar"
+                             aria-valuenow="${item.qty_on_hand}" aria-valuemin="0" aria-valuemax="${item.reorder_point * 2}"
+                             aria-label="Stock: ${item.qty_on_hand} units, reorder at ${item.reorder_point}">
+                            <div class="h-full rounded-full" style="width: ${percentage}%; background-color: ${s.bar}"></div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="text-center">
+                            <p class="text-[10px] uppercase text-on-surface-variant font-bold">Category</p>
+                            <p class="text-xs font-bold text-on-surface mt-1">${escapeHtml(item.category)}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[10px] uppercase text-on-surface-variant font-bold">Unit Cost</p>
+                            <p class="text-xs font-bold text-on-surface mt-1">$${escapeHtml(item.cost.toFixed(2))}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[10px] uppercase text-on-surface-variant font-bold">Location</p>
+                            <p class="text-xs font-bold text-on-surface mt-1">${escapeHtml(item.location)}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
 
-    document.getElementById('supplyDetailsPanel').innerHTML = `
+    document.getElementById('inventoryGridView').innerHTML = html;
+}
+
+// ── Show supply details ────────────────────────────────────────────────────────
+function showSupplyDetails(itemId) {
+    const item = inventoryStore.get(itemId);
+    if (!item) return;
+
+    const ratio = item.qty_on_hand / item.reorder_point;
+    const s = getStatusStyles(ratio);
+    const percentage = Math.min((ratio / 2) * 100, 100);
+    const totalValue = item.qty_on_hand * item.cost;
+
+    const panel = document.getElementById('supplyDetailsPanel');
+    panel.innerHTML = `
         <div class="space-y-6">
             <div class="pb-4 border-b border-surface-container">
                 <div class="flex items-start justify-between mb-2">
-                    <h3 class="text-xl font-bold text-on-surface">${supplyData.item_name}</h3>
-                    <span class="px-3 py-1 bg-${statusColor}-container text-${statusColor} text-[10px] font-bold rounded">
-                        ${status}
+                    <h3 class="text-xl font-bold text-on-surface">${escapeHtml(item.item_name)}</h3>
+                    <span class="px-3 py-1 text-[10px] font-bold rounded ml-2"
+                          style="background-color: ${s.badgeBg}; color: ${s.badgeText}">
+                        ${s.label}
                     </span>
                 </div>
-                <p class="text-xs text-on-surface-variant font-mono">${supplyData.id}</p>
+                <p class="text-xs text-on-surface-variant font-mono">${escapeHtml(item.id)}</p>
             </div>
 
             <div class="space-y-3">
                 <div>
                     <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-2">Stock Status</p>
                     <div class="flex items-center gap-3">
-                        <div class="flex-1">
-                            <div class="h-3 bg-surface-container rounded-full overflow-hidden">
-                                <div class="h-full bg-${statusColor} rounded-full" style="width: ${percentage}%"></div>
-                            </div>
+                        <div class="flex-1 h-3 bg-surface-container rounded-full overflow-hidden"
+                             role="progressbar" aria-valuenow="${item.qty_on_hand}" aria-valuemin="0" aria-valuemax="${item.reorder_point * 2}">
+                            <div class="h-full rounded-full" style="width: ${percentage}%; background-color: ${s.bar}"></div>
                         </div>
-                        <span class="text-sm font-bold text-${statusColor} w-20">${supplyData.qty_on_hand}/${supplyData.reorder_point}</span>
+                        <span class="text-sm font-bold w-20" style="color: ${s.text}">${escapeHtml(String(item.qty_on_hand))}/${escapeHtml(String(item.reorder_point))}</span>
                     </div>
-                    <p class="text-xs text-on-surface-variant mt-2">Reorder Point: ${supplyData.reorder_point} units</p>
+                    <p class="text-xs text-on-surface-variant mt-2">Reorder Point: ${escapeHtml(String(item.reorder_point))} units</p>
                 </div>
 
                 <div>
@@ -266,15 +388,15 @@ function showSupplyDetails(supplyId, supplyData) {
                     <div class="space-y-2 text-sm">
                         <div class="flex justify-between">
                             <span class="text-on-surface-variant">Category</span>
-                            <span class="font-bold">${supplyData.category}</span>
+                            <span class="font-bold">${escapeHtml(item.category)}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-on-surface-variant">Supplier</span>
-                            <span class="font-bold">${supplyData.supplier}</span>
+                            <span class="font-bold">${escapeHtml(item.supplier)}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-on-surface-variant">Location</span>
-                            <span class="font-bold">${supplyData.location}</span>
+                            <span class="font-bold">${escapeHtml(item.location)}</span>
                         </div>
                     </div>
                 </div>
@@ -284,22 +406,154 @@ function showSupplyDetails(supplyId, supplyData) {
                     <div class="space-y-1 text-sm">
                         <div class="flex justify-between">
                             <span class="text-on-surface-variant">Unit Cost</span>
-                            <span class="font-bold">$${supplyData.cost.toFixed(2)}</span>
+                            <span class="font-bold">$${escapeHtml(item.cost.toFixed(2))}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-on-surface-variant">Total Value</span>
-                            <span class="font-bold text-primary">$${totalValue.toFixed(2)}</span>
+                            <span class="font-bold text-primary">$${escapeHtml(totalValue.toFixed(2))}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="pt-4 border-t border-surface-container flex gap-2">
-                <button class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90">Adjust Stock</button>
-                <button class="flex-1 py-2 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high">Order More</button>
+                <button onclick="openAdjustModal('${escapeHtml(itemId)}')"
+                        class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90 transition-colors">Adjust Stock</button>
+                <button onclick="orderMore('${escapeHtml(itemId)}')"
+                        class="flex-1 py-2 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high transition-colors">Order More</button>
             </div>
         </div>
     `;
+    panel.focus();
+}
+
+// ── Filters ────────────────────────────────────────────────────────────────────
+function applyFilters() {
+    const category = document.getElementById('categoryFilter').value;
+    const status = document.getElementById('statusFilter').value;
+    let filtered = allItems;
+
+    if (category) filtered = filtered.filter(i => i.category === category);
+    if (status) {
+        filtered = filtered.filter(i => {
+            const ratio = i.qty_on_hand / i.reorder_point;
+            if (status === 'critical') return ratio < 0.5;
+            if (status === 'low') return ratio >= 0.5 && ratio < 1.5;
+            if (status === 'healthy') return ratio >= 1.5;
+            return true;
+        });
+    }
+
+    renderInventory(filtered);
+}
+
+function clearFilters() {
+    document.getElementById('categoryFilter').value = '';
+    document.getElementById('statusFilter').value = '';
+    renderInventory(allItems);
+}
+
+// ── Order Supplies Modal ───────────────────────────────────────────────────────
+function openOrderModal() {
+    document.getElementById('orderForm').reset();
+    document.getElementById('orderError').classList.add('hidden');
+    document.getElementById('orderModal').classList.remove('hidden');
+    document.getElementById('orderItem').focus();
+}
+
+function closeOrderModal() {
+    document.getElementById('orderModal').classList.add('hidden');
+}
+
+document.getElementById('orderForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const item = document.getElementById('orderItem').value.trim();
+    const qty = document.getElementById('orderQty').value;
+    const supplier = document.getElementById('orderSupplier').value.trim();
+    const errorEl = document.getElementById('orderError');
+
+    if (!item || !qty || !supplier) {
+        errorEl.textContent = 'All fields are required.';
+        errorEl.classList.remove('hidden');
+        return;
+    }
+    closeOrderModal();
+    showToast(`Order placed: ${qty}x "${item}" from ${supplier}.`);
+});
+
+document.getElementById('orderModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('orderModal')) closeOrderModal();
+});
+
+// ── Adjust Stock Modal ─────────────────────────────────────────────────────────
+function openAdjustModal(itemId) {
+    const item = inventoryStore.get(itemId);
+    if (!item) return;
+    document.getElementById('adjustingItemId').value = itemId;
+    document.getElementById('adjustItemName').textContent = item.item_name;
+    document.getElementById('adjustQty').value = item.qty_on_hand;
+    document.getElementById('adjustError').classList.add('hidden');
+    document.getElementById('adjustModal').classList.remove('hidden');
+    document.getElementById('adjustQty').focus();
+}
+
+function closeAdjustModal() {
+    document.getElementById('adjustModal').classList.add('hidden');
+}
+
+document.getElementById('adjustForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const itemId = document.getElementById('adjustingItemId').value;
+    const qty = parseInt(document.getElementById('adjustQty').value);
+    const errorEl = document.getElementById('adjustError');
+
+    if (isNaN(qty) || qty < 0) {
+        errorEl.textContent = 'Please enter a valid quantity (0 or more).';
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        const res = await fetch(`/api/inventory/${encodeURIComponent(itemId)}/adjust`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ qty_on_hand: qty }),
+        });
+
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || `Error ${res.status}`);
+        }
+
+        const updated = await res.json();
+        inventoryStore.set(itemId, updated);
+        const idx = allItems.findIndex(i => i.id === itemId);
+        if (idx !== -1) allItems[idx] = updated;
+
+        closeAdjustModal();
+        showToast(`Stock updated to ${qty} units.`);
+        renderInventory(allItems);
+        showSupplyDetails(itemId);
+    } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+    }
+});
+
+document.getElementById('adjustModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('adjustModal')) closeAdjustModal();
+});
+
+// ── Order More (pre-fills order modal) ────────────────────────────────────────
+function orderMore(itemId) {
+    const item = inventoryStore.get(itemId);
+    if (!item) return;
+    document.getElementById('orderItem').value = item.item_name;
+    document.getElementById('orderSupplier').value = item.supplier;
+    document.getElementById('orderQty').value = Math.max(item.reorder_point - item.qty_on_hand, 1);
+    document.getElementById('orderError').classList.add('hidden');
+    document.getElementById('orderModal').classList.remove('hidden');
+    document.getElementById('orderQty').focus();
 }
 
 loadInventory();

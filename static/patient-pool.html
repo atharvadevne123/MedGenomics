@@ -50,11 +50,58 @@
     </style>
 </head>
 <body class="bg-surface text-on-surface flex min-h-screen">
+
+<!-- Toast notification -->
+<div id="toast" class="hidden fixed bottom-6 right-6 z-[100] text-white px-4 py-3 rounded-xl shadow-xl text-sm font-medium max-w-sm" role="alert" aria-live="polite"></div>
+
+<!-- Add / Edit Patient Modal -->
+<div id="patientModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="bg-white rounded-xl p-8 max-w-md w-full shadow-2xl">
+        <h2 id="modalTitle" class="text-xl font-bold mb-6">Add New Patient</h2>
+        <form id="patientForm" class="space-y-4" novalidate>
+            <input type="hidden" id="editingPatientId" value="">
+            <div>
+                <label for="patientId" class="block text-sm font-medium text-on-surface-variant mb-1">Patient ID</label>
+                <input id="patientId" name="id" type="text" required placeholder="MG-XXXX-X"
+                    class="w-full bg-surface-container-low border border-surface-container-high rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+            </div>
+            <div>
+                <label for="patientName" class="block text-sm font-medium text-on-surface-variant mb-1">Full Name</label>
+                <input id="patientName" name="name" type="text" required placeholder="First Last"
+                    class="w-full bg-surface-container-low border border-surface-container-high rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label for="patientAge" class="block text-sm font-medium text-on-surface-variant mb-1">Age</label>
+                    <input id="patientAge" name="age" type="number" required min="0" max="150" placeholder="42"
+                        class="w-full bg-surface-container-low border border-surface-container-high rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                </div>
+                <div>
+                    <label for="patientRisk" class="block text-sm font-medium text-on-surface-variant mb-1">Risk Score (%)</label>
+                    <input id="patientRisk" name="risk_score" type="number" required min="0" max="100" placeholder="75"
+                        class="w-full bg-surface-container-low border border-surface-container-high rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+                </div>
+            </div>
+            <div>
+                <label for="patientDna" class="block text-sm font-medium text-on-surface-variant mb-1">DNA Marker</label>
+                <input id="patientDna" name="dna_marker" type="text" required placeholder="A+2"
+                    class="w-full bg-surface-container-low border border-surface-container-high rounded-lg py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary"/>
+            </div>
+            <p id="formError" class="text-sm text-error hidden" role="alert"></p>
+            <div class="flex gap-3 pt-2">
+                <button type="submit" class="flex-1 py-2.5 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90 transition-colors">Save Patient</button>
+                <button type="button" onclick="closePatientModal()" class="flex-1 py-2.5 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high transition-colors">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Sidebar -->
 <aside class="hidden xl:flex h-screen w-64 fixed left-0 top-0 bg-slate-50 flex-col pt-20 py-4 space-y-2 z-40">
     <div class="px-6 mb-6">
         <div class="flex items-center gap-3 py-4">
             <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl text-white">
-                <span class="material-symbols-outlined">genetics</span>
+                <span class="material-symbols-outlined" aria-hidden="true">genetics</span>
             </div>
             <div>
                 <h3 class="text-sm font-bold text-on-surface leading-tight">Precision Care</h3>
@@ -62,30 +109,34 @@
             </div>
         </div>
     </div>
-    <nav class="flex-1 space-y-1 px-2">
+    <nav class="flex-1 space-y-1 px-2" aria-label="Main navigation">
         <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/">
-            <span class="material-symbols-outlined">dashboard</span>
+            <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
             <span class="font-['Manrope'] text-sm font-medium">Dashboard</span>
         </a>
-        <a class="flex items-center gap-3 px-4 py-3 bg-green-50 text-green-800 rounded-lg" href="/patient-pool">
-            <span class="material-symbols-outlined">group</span>
+        <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/genomic-records">
+            <span class="material-symbols-outlined" aria-hidden="true">genetics</span>
+            <span class="font-['Manrope'] text-sm font-medium">Genomic Records</span>
+        </a>
+        <a class="flex items-center gap-3 px-4 py-3 bg-green-50 text-green-800 rounded-lg" href="/patient-pool" aria-current="page">
+            <span class="material-symbols-outlined" aria-hidden="true">group</span>
             <span class="font-['Manrope'] text-sm font-medium">Patient Pool</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/inventory">
-            <span class="material-symbols-outlined">inventory_2</span>
+            <span class="material-symbols-outlined" aria-hidden="true">inventory_2</span>
             <span class="font-['Manrope'] text-sm font-medium">Inventory</span>
         </a>
         <a class="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-lg transition-all hover:translate-x-1" href="/analytics">
-            <span class="material-symbols-outlined">analytics</span>
+            <span class="material-symbols-outlined" aria-hidden="true">analytics</span>
             <span class="font-['Manrope'] text-sm font-medium">Analytics</span>
         </a>
     </nav>
 </aside>
 
-<main class="xl:pl-64 pt-16 min-h-screen w-full">
+<main class="xl:pl-64 pt-16 min-h-screen w-full pb-20 xl:pb-0">
     <header class="bg-white/80 backdrop-blur-xl fixed top-0 w-full z-50 h-16 flex items-center px-6">
-        <a href="/" class="flex items-center gap-2 text-green-900 font-bold hover:text-green-700">
-            <span class="material-symbols-outlined">arrow_back</span>
+        <a href="/" class="flex items-center gap-2 text-green-900 font-bold hover:text-green-700" aria-label="Back to Dashboard">
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
         </a>
         <h1 class="ml-4 text-xl font-bold">Patient Pool</h1>
     </header>
@@ -96,37 +147,50 @@
                 <h2 class="text-3xl font-extrabold tracking-tight">Patient Pool</h2>
                 <p class="text-on-surface-variant">Database of active genomic participant profiles with real-time risk assessments.</p>
             </div>
-            <button class="flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all">
-                <span class="material-symbols-outlined">person_add</span>
+            <button onclick="openAddPatientModal()" class="flex items-center gap-2 px-6 py-3 bg-primary text-white font-bold rounded-xl shadow-lg hover:shadow-xl active:scale-95 transition-all">
+                <span class="material-symbols-outlined" aria-hidden="true">person_add</span>
                 <span>Add New Patient</span>
             </button>
         </div>
 
         <div class="bg-surface-container-low rounded-2xl p-6 mb-8">
-            <div class="flex gap-4 mb-6">
-                <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary flex-1">
-                    <option>All Ages</option>
-                    <option>18 - 35</option>
-                    <option>36 - 60</option>
-                    <option>60+</option>
-                </select>
-                <select class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary flex-1">
-                    <option>All Risk Levels</option>
-                    <option>High (>80%)</option>
-                    <option>Moderate (40-80%)</option>
-                    <option>Low (<40%)</option>
-                </select>
-                <button class="px-4 py-2 bg-white rounded-lg text-sm font-bold hover:bg-slate-50">Clear filters</button>
+            <div class="flex flex-wrap gap-4">
+                <div>
+                    <label for="ageFilter" class="block text-xs font-medium text-on-surface-variant mb-1">Age Range</label>
+                    <select id="ageFilter" class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary" onchange="applyFilters()">
+                        <option value="">All Ages</option>
+                        <option value="18-35">18 &ndash; 35</option>
+                        <option value="36-60">36 &ndash; 60</option>
+                        <option value="61+">60+</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="riskFilter" class="block text-xs font-medium text-on-surface-variant mb-1">Risk Level</label>
+                    <select id="riskFilter" class="bg-white border-none rounded-lg text-sm font-medium py-2 px-3 focus:ring-1 focus:ring-primary" onchange="applyFilters()">
+                        <option value="">All Risk Levels</option>
+                        <option value="high">High (&gt;80%)</option>
+                        <option value="moderate">Moderate (40&ndash;80%)</option>
+                        <option value="low">Low (&lt;40%)</option>
+                    </select>
+                </div>
+                <div class="flex items-end">
+                    <button onclick="clearFilters()" class="px-4 py-2 bg-white rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">Clear filters</button>
+                </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-            <div id="patientDetailView" class="lg:col-span-2 space-y-6">
-                <!-- Patient list will be populated here -->
+            <div id="patientDetailView" class="lg:col-span-2 space-y-6" aria-live="polite" aria-label="Patient list">
+                <!-- skeleton loaders -->
+                <div class="space-y-4">
+                    <div class="animate-pulse bg-surface-container-lowest rounded-xl p-6 h-40"></div>
+                    <div class="animate-pulse bg-surface-container-lowest rounded-xl p-6 h-40"></div>
+                    <div class="animate-pulse bg-surface-container-lowest rounded-xl p-6 h-40"></div>
+                </div>
             </div>
 
             <div class="lg:col-span-1">
-                <div id="patientDetailsPanel" class="bg-surface-container-lowest rounded-xl p-6 shadow-sm sticky top-24">
+                <div id="patientDetailsPanel" class="bg-surface-container-lowest rounded-xl p-6 shadow-sm sticky top-24" tabindex="-1" aria-live="polite" aria-label="Patient details">
                     <p class="text-center text-on-surface-variant">Select a patient to view details</p>
                 </div>
             </div>
@@ -134,93 +198,171 @@
     </div>
 </main>
 
+<!-- Mobile nav -->
+<nav class="xl:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-zinc-200 px-4 py-3 flex justify-between items-center z-50" aria-label="Mobile navigation">
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/">
+        <span class="material-symbols-outlined" aria-hidden="true">dashboard</span>
+        <span class="text-[10px] font-bold">Dashboard</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/genomic-records">
+        <span class="material-symbols-outlined" aria-hidden="true">genetics</span>
+        <span class="text-[10px] font-bold">Genomics</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-green-700" href="/patient-pool" aria-current="page">
+        <span class="material-symbols-outlined" aria-hidden="true">group</span>
+        <span class="text-[10px] font-bold">Patients</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/inventory">
+        <span class="material-symbols-outlined" aria-hidden="true">inventory_2</span>
+        <span class="text-[10px] font-bold">Supplies</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/analytics">
+        <span class="material-symbols-outlined" aria-hidden="true">analytics</span>
+        <span class="text-[10px] font-bold">Analytics</span>
+    </a>
+</nav>
+
 <script>
+// ── Utilities ──────────────────────────────────────────────────────────────────
+function escapeHtml(str) {
+    return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+// Returns hex color values for a given risk score — avoids dynamic Tailwind class names
+// (Tailwind requires all class names to be statically present at build time)
+function getRiskStyles(riskScore) {
+    if (riskScore > 80) return { border: '#ba1a1a', badgeBg: '#ffdad6', badgeText: '#ba1a1a', bar: '#ba1a1a', text: '#ba1a1a', label: 'CRITICAL' };
+    if (riskScore > 40) return { border: '#794600', badgeBg: '#fef0e0', badgeText: '#794600', bar: '#794600', text: '#794600', label: 'MODERATE' };
+    return { border: '#006028', badgeBg: '#e8f5ec', badgeText: '#006028', bar: '#006028', text: '#006028', label: 'LOW' };
+}
+
+function showToast(message, isError = false) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.backgroundColor = isError ? '#ba1a1a' : '#1a1c1c';
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 3500);
+}
+
+// ── Data store — eliminates passing raw JSON through onclick attributes (XSS risk) ──
+const patientStore = new Map();
+let allPatients = [];
+
+// ── Load patients ──────────────────────────────────────────────────────────────
 async function loadPatients() {
     try {
         const response = await fetch('/api/patients');
-        const patients = await response.json();
-
-        const patientListHtml = patients.map(p => {
-            const riskColor = p.risk_score > 80 ? 'error' : p.risk_score > 40 ? 'tertiary' : 'primary';
-            const riskLabel = p.risk_score > 80 ? 'CRITICAL' : p.risk_score > 40 ? 'MODERATE' : 'LOW';
-
-            return `
-                <div class="bg-surface-container-lowest rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all border-l-4 border-${riskColor}"
-                     onclick="showPatientDetails('${p.id}', ${JSON.stringify(p).replace(/"/g, '&quot;')})">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="flex items-center gap-4 flex-1">
-                            <div class="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-600 text-lg">
-                                ${p.initials}
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-bold text-on-surface">${p.name}</h3>
-                                <p class="text-xs text-on-surface-variant font-mono">ID: ${p.id}</p>
-                                <p class="text-xs text-on-surface-variant mt-1">Age: ${p.age} years</p>
-                            </div>
-                        </div>
-                        <span class="px-3 py-1 bg-${riskColor}-container text-${riskColor} text-[10px] font-bold rounded whitespace-nowrap">
-                            ${riskLabel}
-                        </span>
-                    </div>
-                    <div class="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-surface-container">
-                        <div class="text-center">
-                            <p class="text-[10px] uppercase text-on-surface-variant font-bold">Risk Score</p>
-                            <p class="text-lg font-bold text-${riskColor}">${p.risk_score}%</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-[10px] uppercase text-on-surface-variant font-bold">DNA Marker</p>
-                            <p class="text-lg font-bold text-secondary">${p.dna_marker}</p>
-                        </div>
-                        <div class="text-center">
-                            <p class="text-[10px] uppercase text-on-surface-variant font-bold">Status</p>
-                            <p class="text-xs font-bold text-on-surface">Active</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        document.getElementById('patientDetailView').innerHTML = patientListHtml || '<p class="text-center text-on-surface-variant">No patients found</p>';
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        allPatients = await response.json();
+        allPatients.forEach(p => patientStore.set(p.id, p));
+        renderPatients(allPatients);
     } catch (err) {
         console.error('Error loading patients:', err);
-        document.getElementById('patientDetailView').innerHTML = '<p class="text-center text-error">Error loading patients</p>';
+        document.getElementById('patientDetailView').innerHTML =
+            '<p class="text-center text-error py-8">Failed to load patients. Please refresh the page.</p>';
     }
 }
 
-function showPatientDetails(patientId, patientData) {
-    const conditionsHtml = Object.entries(patientData.conditions || {})
-        .map(([condition, value]) => value ? `<span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded">${condition}</span>` : '')
-        .join('');
+function renderPatients(patients) {
+    if (!patients.length) {
+        document.getElementById('patientDetailView').innerHTML =
+            '<p class="text-center text-on-surface-variant py-8">No patients found matching the selected filters.</p>';
+        return;
+    }
 
-    const genomicDataHtml = Object.entries(patientData.genomic_data || {})
+    const html = patients.map(p => {
+        const s = getRiskStyles(p.risk_score);
+        return `
+            <div class="bg-surface-container-lowest rounded-xl p-6 cursor-pointer hover:shadow-lg transition-all border-l-4"
+                 style="border-left-color: ${s.border}"
+                 role="button"
+                 tabindex="0"
+                 aria-label="View details for ${escapeHtml(p.name)}"
+                 onclick="showPatientDetails('${escapeHtml(p.id)}')"
+                 onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();showPatientDetails('${escapeHtml(p.id)}');}">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="flex items-center gap-4 flex-1">
+                        <div class="w-14 h-14 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-600 text-lg" aria-hidden="true">
+                            ${escapeHtml(p.initials)}
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-on-surface">${escapeHtml(p.name)}</h3>
+                            <p class="text-xs text-on-surface-variant font-mono">ID: ${escapeHtml(p.id)}</p>
+                            <p class="text-xs text-on-surface-variant mt-1">Age: ${escapeHtml(String(p.age))} years</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 text-[10px] font-bold rounded whitespace-nowrap"
+                          style="background-color: ${s.badgeBg}; color: ${s.badgeText}">
+                        ${s.label}
+                    </span>
+                </div>
+                <div class="grid grid-cols-3 gap-3 mt-4 pt-4 border-t border-surface-container">
+                    <div class="text-center">
+                        <p class="text-[10px] uppercase text-on-surface-variant font-bold">Risk Score</p>
+                        <p class="text-lg font-bold" style="color: ${s.text}">${escapeHtml(String(p.risk_score))}%</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[10px] uppercase text-on-surface-variant font-bold">DNA Marker</p>
+                        <p class="text-lg font-bold text-secondary">${escapeHtml(p.dna_marker)}</p>
+                    </div>
+                    <div class="text-center">
+                        <p class="text-[10px] uppercase text-on-surface-variant font-bold">Status</p>
+                        <p class="text-xs font-bold text-on-surface">Active</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    document.getElementById('patientDetailView').innerHTML = html;
+}
+
+// ── Show patient details ───────────────────────────────────────────────────────
+function showPatientDetails(patientId) {
+    const p = patientStore.get(patientId);
+    if (!p) return;
+    const s = getRiskStyles(p.risk_score);
+
+    const conditionsHtml = Object.entries(p.conditions || {})
+        .filter(([, v]) => v)
+        .map(([k]) => `<span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded">${escapeHtml(k)}</span>`)
+        .join('') || '<p class="text-xs text-on-surface-variant">No conditions recorded</p>';
+
+    const genomicHtml = Object.entries(p.genomic_data || {})
         .map(([key, value]) => `
             <div class="flex justify-between py-2 border-b border-surface-container">
-                <span class="text-on-surface-variant font-medium text-sm">${key}</span>
-                <span class="font-bold text-on-surface">${value}</span>
+                <span class="text-on-surface-variant font-medium text-sm">${escapeHtml(key)}</span>
+                <span class="font-bold text-on-surface">${escapeHtml(String(value))}</span>
             </div>
-        `)
-        .join('');
+        `).join('') || '<p class="text-xs text-on-surface-variant">No genomic data available</p>';
 
-    const riskColor = patientData.risk_score > 80 ? 'error' : patientData.risk_score > 40 ? 'tertiary' : 'primary';
-
-    document.getElementById('patientDetailsPanel').innerHTML = `
+    const panel = document.getElementById('patientDetailsPanel');
+    panel.innerHTML = `
         <div class="space-y-6">
             <div class="text-center pb-4 border-b border-surface-container">
-                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-600 text-2xl mx-auto mb-2">
-                    ${patientData.initials}
+                <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center font-bold text-slate-600 text-2xl mx-auto mb-2" aria-hidden="true">
+                    ${escapeHtml(p.initials)}
                 </div>
-                <h3 class="text-xl font-bold text-on-surface">${patientData.name}</h3>
-                <p class="text-xs text-on-surface-variant font-mono mt-1">${patientData.id}</p>
+                <h3 class="text-xl font-bold text-on-surface">${escapeHtml(p.name)}</h3>
+                <p class="text-xs text-on-surface-variant font-mono mt-1">${escapeHtml(p.id)}</p>
             </div>
 
             <div class="space-y-3">
                 <div>
                     <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-1">Risk Score</p>
                     <div class="flex items-center gap-2">
-                        <div class="flex-1 h-3 bg-surface-container rounded-full overflow-hidden">
-                            <div class="h-full bg-${riskColor} rounded-full" style="width: ${patientData.risk_score}%"></div>
+                        <div class="flex-1 h-3 bg-surface-container rounded-full overflow-hidden"
+                             role="progressbar"
+                             aria-valuenow="${p.risk_score}" aria-valuemin="0" aria-valuemax="100"
+                             aria-label="Risk score ${p.risk_score}%">
+                            <div class="h-full rounded-full" style="width: ${p.risk_score}%; background-color: ${s.bar}"></div>
                         </div>
-                        <span class="text-lg font-bold text-${riskColor}">${patientData.risk_score}%</span>
+                        <span class="text-lg font-bold" style="color: ${s.text}">${escapeHtml(String(p.risk_score))}%</span>
                     </div>
                 </div>
 
@@ -229,37 +371,148 @@ function showPatientDetails(patientId, patientData) {
                     <div class="space-y-1">
                         <div class="flex justify-between">
                             <span class="text-on-surface-variant">Age</span>
-                            <span class="font-bold">${patientData.age} years</span>
+                            <span class="font-bold">${escapeHtml(String(p.age))} years</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-on-surface-variant">DNA Marker</span>
-                            <span class="font-bold text-secondary">${patientData.dna_marker}</span>
+                            <span class="font-bold text-secondary">${escapeHtml(p.dna_marker)}</span>
                         </div>
                     </div>
                 </div>
 
                 <div>
                     <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-2">Conditions</p>
-                    <div class="flex flex-wrap gap-2">
-                        ${conditionsHtml || '<p class="text-xs text-on-surface-variant">No conditions recorded</p>'}
-                    </div>
+                    <div class="flex flex-wrap gap-2">${conditionsHtml}</div>
                 </div>
 
                 <div>
                     <p class="text-[10px] uppercase text-on-surface-variant font-bold mb-2">Genomic Data</p>
-                    <div class="space-y-1 text-sm">
-                        ${genomicDataHtml || '<p class="text-xs text-on-surface-variant">No genomic data available</p>'}
-                    </div>
+                    <div class="space-y-1 text-sm">${genomicHtml}</div>
                 </div>
             </div>
 
             <div class="pt-4 border-t border-surface-container flex gap-2">
-                <button class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90">Edit</button>
-                <button class="flex-1 py-2 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high">View Details</button>
+                <button onclick="openEditPatientModal('${escapeHtml(patientId)}')"
+                        class="flex-1 py-2 bg-primary text-white font-bold rounded-lg text-sm hover:bg-primary/90 transition-colors">Edit</button>
+                <a href="/genomic-records"
+                   class="flex-1 py-2 bg-surface-container text-on-surface font-bold rounded-lg text-sm hover:bg-surface-container-high transition-colors text-center">View Records</a>
             </div>
         </div>
     `;
+
+    // Move focus to panel so keyboard/screen-reader users are aware of the update
+    panel.focus();
 }
+
+// ── Filters ────────────────────────────────────────────────────────────────────
+function applyFilters() {
+    const ageVal = document.getElementById('ageFilter').value;
+    const riskVal = document.getElementById('riskFilter').value;
+    let filtered = allPatients;
+
+    if (ageVal === '18-35') filtered = filtered.filter(p => p.age >= 18 && p.age <= 35);
+    else if (ageVal === '36-60') filtered = filtered.filter(p => p.age >= 36 && p.age <= 60);
+    else if (ageVal === '61+') filtered = filtered.filter(p => p.age >= 61);
+
+    if (riskVal === 'high') filtered = filtered.filter(p => p.risk_score > 80);
+    else if (riskVal === 'moderate') filtered = filtered.filter(p => p.risk_score >= 40 && p.risk_score <= 80);
+    else if (riskVal === 'low') filtered = filtered.filter(p => p.risk_score < 40);
+
+    renderPatients(filtered);
+}
+
+function clearFilters() {
+    document.getElementById('ageFilter').value = '';
+    document.getElementById('riskFilter').value = '';
+    renderPatients(allPatients);
+}
+
+// ── Modal ──────────────────────────────────────────────────────────────────────
+function openAddPatientModal() {
+    document.getElementById('modalTitle').textContent = 'Add New Patient';
+    document.getElementById('editingPatientId').value = '';
+    document.getElementById('patientForm').reset();
+    document.getElementById('patientId').disabled = false;
+    document.getElementById('formError').classList.add('hidden');
+    document.getElementById('patientModal').classList.remove('hidden');
+    document.getElementById('patientId').focus();
+}
+
+function openEditPatientModal(patientId) {
+    const p = patientStore.get(patientId);
+    if (!p) return;
+    document.getElementById('modalTitle').textContent = 'Edit Patient';
+    document.getElementById('editingPatientId').value = patientId;
+    document.getElementById('patientId').value = p.id;
+    document.getElementById('patientId').disabled = true;
+    document.getElementById('patientName').value = p.name;
+    document.getElementById('patientAge').value = p.age;
+    document.getElementById('patientRisk').value = p.risk_score;
+    document.getElementById('patientDna').value = p.dna_marker;
+    document.getElementById('formError').classList.add('hidden');
+    document.getElementById('patientModal').classList.remove('hidden');
+    document.getElementById('patientName').focus();
+}
+
+function closePatientModal() {
+    document.getElementById('patientModal').classList.add('hidden');
+}
+
+document.getElementById('patientForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errorEl = document.getElementById('formError');
+    errorEl.classList.add('hidden');
+
+    const isEditing = !!document.getElementById('editingPatientId').value;
+    const id = document.getElementById('patientId').value.trim();
+    const name = document.getElementById('patientName').value.trim();
+    const age = parseInt(document.getElementById('patientAge').value);
+    const riskScore = parseFloat(document.getElementById('patientRisk').value);
+    const dnaMarker = document.getElementById('patientDna').value.trim();
+
+    if (!id || !name || isNaN(age) || isNaN(riskScore) || !dnaMarker) {
+        errorEl.textContent = 'All fields are required.';
+        errorEl.classList.remove('hidden');
+        return;
+    }
+
+    const existing = patientStore.get(id);
+    const payload = {
+        id,
+        name,
+        age,
+        risk_score: riskScore,
+        dna_marker: dnaMarker,
+        initials: name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(),
+        conditions: isEditing && existing ? (existing.conditions ?? {}) : {},
+        genomic_data: isEditing && existing ? (existing.genomic_data ?? {}) : {},
+    };
+
+    try {
+        const res = await fetch('/api/patients', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.detail || `Error ${res.status}`);
+        }
+
+        closePatientModal();
+        showToast(isEditing ? 'Patient updated.' : 'Patient added successfully.');
+        await loadPatients();
+    } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.classList.remove('hidden');
+    }
+});
+
+// Close modal when clicking backdrop
+document.getElementById('patientModal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('patientModal')) closePatientModal();
+});
 
 loadPatients();
 </script>

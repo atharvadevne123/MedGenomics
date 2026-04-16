@@ -1,17 +1,20 @@
+# Credentials are loaded from a .env file (copy .env.example → .env and fill in values).
+# Never commit real credentials to version control.
+
 services:
   postgres:
     image: postgres:16-alpine
     container_name: medgenomics-postgres
     environment:
-      POSTGRES_DB: medgenomics
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: secure123
+      POSTGRES_DB: ${POSTGRES_DB:-medgenomics}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -26,9 +29,17 @@ services:
         condition: service_healthy
     volumes:
       - ./src:/app/src
+      - ./static:/app/static
     environment:
-      DATABASE_URL: postgresql://admin:secure123@postgres:5432/medgenomics
+      DATABASE_URL: postgresql://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-medgenomics}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
     command: uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
 
 volumes:
   postgres_data:

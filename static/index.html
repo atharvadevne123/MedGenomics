@@ -132,13 +132,14 @@
         <div class="flex items-center gap-4">
             <div class="relative">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-sm" data-icon="search">search</span>
-                <input class="bg-zinc-100 dark:bg-zinc-800 border-none rounded-sm py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-emerald-700 focus:ring-opacity-50" placeholder="Search clinical data..." type="text"/>
+                <label for="globalSearch" class="sr-only">Search clinical data</label>
+                <input id="globalSearch" class="bg-zinc-100 dark:bg-zinc-800 border-none rounded-sm py-2 pl-10 pr-4 text-sm w-64 focus:ring-2 focus:ring-emerald-700 focus:ring-opacity-50" placeholder="Search clinical data..." type="text" aria-label="Search clinical data"/>
             </div>
         </div>
         <div class="flex items-center gap-4">
-            <button class="p-2 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors relative">
-                <span class="material-symbols-outlined" data-icon="notifications">notifications</span>
-                <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+            <button class="p-2 text-zinc-500 hover:bg-zinc-100 rounded-full transition-colors relative" aria-label="Notifications">
+                <span class="material-symbols-outlined" aria-hidden="true">notifications</span>
+                <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full" aria-hidden="true"></span>
             </button>
             <div class="flex items-center gap-3 pl-4 border-l border-zinc-200">
                 <div class="text-right hidden sm:block">
@@ -162,8 +163,8 @@
                     <span class="material-symbols-outlined text-zinc-500 text-sm" data-icon="calendar_today">calendar_today</span>
                     <span class="text-sm font-medium text-on-surface-variant">Today</span>
                 </div>
-                <button class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-sm active:scale-95 transition-all">
-                    <span class="material-symbols-outlined text-lg" data-icon="file_download">file_download</span>
+                <button onclick="window.location.href='/api/export/report'" class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-5 py-2.5 rounded-lg font-semibold text-sm shadow-sm active:scale-95 transition-all">
+                    <span class="material-symbols-outlined text-lg" aria-hidden="true">file_download</span>
                     Export Report
                 </button>
             </div>
@@ -305,18 +306,34 @@
         <span class="text-[10px] font-bold">Patients</span>
     </a>
     <a class="flex flex-col items-center gap-1 text-zinc-400" href="/inventory">
-        <span class="material-symbols-outlined" data-icon="inventory_2">inventory_2</span>
+        <span class="material-symbols-outlined" aria-hidden="true">inventory_2</span>
         <span class="text-[10px] font-bold">Supplies</span>
+    </a>
+    <a class="flex flex-col items-center gap-1 text-zinc-400" href="/analytics">
+        <span class="material-symbols-outlined" aria-hidden="true">analytics</span>
+        <span class="text-[10px] font-bold">Analytics</span>
     </a>
 </nav>
 
 <script>
+function escapeHtml(str) {
+    return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 async function loadDashboardData() {
     try {
         const [patientsRes, inventoryRes] = await Promise.all([
             fetch('/api/patients'),
             fetch('/api/inventory')
         ]);
+
+        if (!patientsRes.ok) throw new Error(`Patients API error: ${patientsRes.status}`);
+        if (!inventoryRes.ok) throw new Error(`Inventory API error: ${inventoryRes.status}`);
 
         const patients = await patientsRes.json();
         const inventory = await inventoryRes.json();
@@ -353,19 +370,19 @@ async function loadDashboardData() {
         document.getElementById('criticalStockCount').textContent = criticalStock;
         document.getElementById('lowStockItems').textContent = lowStock + criticalStock;
 
-        // Load recent alerts
+        // Load recent alerts — escape all data to prevent XSS
         const alertsHtml = patients
             .filter(p => p.risk_score > 80)
             .slice(0, 3)
             .map(p => `
                 <div class="flex flex-col md:flex-row md:items-center gap-4 p-6 hover:bg-zinc-50 transition-colors">
                     <div class="text-xs font-bold text-zinc-400 w-24 shrink-0">High Risk</div>
-                    <div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center shrink-0">
+                    <div class="w-10 h-10 rounded-full bg-error-container flex items-center justify-center shrink-0" aria-hidden="true">
                         <span class="material-symbols-outlined text-error text-lg">warning</span>
                     </div>
                     <div class="flex-1">
-                        <p class="text-sm font-semibold text-on-surface">${p.name} - Risk Score: ${p.risk_score}%</p>
-                        <p class="text-xs text-on-surface-variant">ID: ${p.id} • DNA Marker: ${p.dna_marker}</p>
+                        <p class="text-sm font-semibold text-on-surface">${escapeHtml(p.name)} - Risk Score: ${escapeHtml(String(p.risk_score))}%</p>
+                        <p class="text-xs text-on-surface-variant">ID: ${escapeHtml(p.id)} &bull; DNA Marker: ${escapeHtml(p.dna_marker)}</p>
                     </div>
                     <div class="bg-error-container px-3 py-1 rounded-full text-[10px] font-bold text-error">CRITICAL</div>
                 </div>
@@ -375,6 +392,8 @@ async function loadDashboardData() {
         document.getElementById('alertsContainer').innerHTML = alertsHtml || '<div class="p-6 text-center text-on-surface-variant">No critical alerts</div>';
     } catch (err) {
         console.error('Error loading dashboard data:', err);
+        document.getElementById('alertsContainer').innerHTML =
+            '<div class="p-6 text-center text-error">Failed to load dashboard data. Please refresh.</div>';
     }
 }
 

@@ -67,9 +67,10 @@
         <div class="bg-surface-container-low rounded-xl p-6 mb-8">
             <div class="flex flex-col md:flex-row gap-4">
                 <div class="flex-1">
-                    <input type="text" placeholder="Search by patient ID, gene, or variant..." class="w-full bg-white border-none rounded-lg text-sm py-2 px-4 focus:ring-1 focus:ring-primary"/>
+                    <label for="recordSearch" class="sr-only">Search by patient ID, gene, or variant</label>
+                    <input id="recordSearch" type="text" placeholder="Search by patient ID, gene, or variant..." aria-label="Search genomic records" class="w-full bg-white border-none rounded-lg text-sm py-2 px-4 focus:ring-1 focus:ring-primary"/>
                 </div>
-                <button class="px-6 py-2 bg-white rounded-lg text-sm font-bold hover:bg-slate-50">Advanced Search</button>
+                <button aria-label="Advanced search options (coming soon)" class="px-6 py-2 bg-white rounded-lg text-sm font-bold hover:bg-slate-50 transition-colors">Advanced Search</button>
             </div>
         </div>
 
@@ -78,50 +79,86 @@
                 <table class="w-full">
                     <thead>
                         <tr class="border-b border-surface-container">
-                            <th class="text-left text-sm font-bold text-on-surface-variant pb-4">Patient ID</th>
-                            <th class="text-left text-sm font-bold text-on-surface-variant pb-4">Gene</th>
-                            <th class="text-left text-sm font-bold text-on-surface-variant pb-4">Variant</th>
-                            <th class="text-left text-sm font-bold text-on-surface-variant pb-4">Risk Level</th>
-                            <th class="text-left text-sm font-bold text-on-surface-variant pb-4">Status</th>
+                            <th scope="col" class="text-left text-sm font-bold text-on-surface-variant pb-4">Patient ID</th>
+                            <th scope="col" class="text-left text-sm font-bold text-on-surface-variant pb-4">Gene</th>
+                            <th scope="col" class="text-left text-sm font-bold text-on-surface-variant pb-4">Variant</th>
+                            <th scope="col" class="text-left text-sm font-bold text-on-surface-variant pb-4">Risk Level</th>
+                            <th scope="col" class="text-left text-sm font-bold text-on-surface-variant pb-4">Status</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
-                        <tr class="animate-pulse">
-                            <td class="py-3 h-4 bg-surface-container rounded"></td>
-                            <td class="py-3 h-4 bg-surface-container rounded"></td>
-                            <td class="py-3 h-4 bg-surface-container rounded"></td>
-                            <td class="py-3 h-4 bg-surface-container rounded"></td>
-                            <td class="py-3 h-4 bg-surface-container rounded"></td>
+                        <tr class="animate-pulse" aria-label="Loading records">
+                            <td class="py-4"><div class="h-4 bg-surface-container rounded w-24"></div></td>
+                            <td class="py-4"><div class="h-4 bg-surface-container rounded w-16"></div></td>
+                            <td class="py-4"><div class="h-4 bg-surface-container rounded w-12"></div></td>
+                            <td class="py-4"><div class="h-4 bg-surface-container rounded w-14"></div></td>
+                            <td class="py-4"><div class="h-4 bg-surface-container rounded w-16"></div></td>
                         </tr>
                     </tbody>
                 </table>
+                <p id="tableError" class="hidden text-center text-error py-6 text-sm" role="alert"></p>
             </div>
         </div>
     </div>
 </main>
 
 <script>
-fetch('/api/patients')
-    .then(r => r.json())
-    .then(patients => {
+function escapeHtml(str) {
+    return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+async function loadRecords() {
+    try {
+        const response = await fetch('/api/patients');
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        const patients = await response.json();
+
         const tbody = document.getElementById('tableBody');
-        tbody.innerHTML = patients.map(p => `
-            <tr class="border-b border-surface-container hover:bg-surface-container-low transition-colors">
-                <td class="py-4 text-sm font-medium">${p.id}</td>
-                <td class="py-4 text-sm">BRCA2</td>
-                <td class="py-4 text-sm font-mono">${p.dna_marker}</td>
-                <td class="py-4">
-                    <span class="px-2 py-1 text-xs font-bold rounded ${p.risk_score > 80 ? 'bg-error/10 text-error' : p.risk_score > 40 ? 'bg-tertiary/10 text-tertiary' : 'bg-primary/10 text-primary'}">
-                        ${p.risk_score}%
-                    </span>
-                </td>
-                <td class="py-4">
-                    <span class="text-xs font-medium text-on-surface-variant">${p.risk_score > 80 ? 'CRITICAL' : 'ACTIVE'}</span>
-                </td>
-            </tr>
-        `).join('');
-    })
-    .catch(err => console.error('Error loading records:', err));
+
+        if (!patients.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-on-surface-variant">No genomic records found.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = patients.map(p => {
+            const riskClass = p.risk_score > 80
+                ? 'bg-red-50 text-error'
+                : p.risk_score > 40
+                    ? 'bg-amber-50 text-tertiary'
+                    : 'bg-green-50 text-primary';
+            const statusLabel = p.risk_score > 80 ? 'CRITICAL' : 'ACTIVE';
+            const gene = Object.keys(p.genomic_data || {}).find(k => k !== 'expression_level') || 'N/A';
+            return `
+                <tr class="border-b border-surface-container hover:bg-surface-container-low transition-colors">
+                    <td class="py-4 text-sm font-medium font-mono">${escapeHtml(p.id)}</td>
+                    <td class="py-4 text-sm">${escapeHtml(gene)}</td>
+                    <td class="py-4 text-sm font-mono">${escapeHtml(p.dna_marker)}</td>
+                    <td class="py-4">
+                        <span class="px-2 py-1 text-xs font-bold rounded ${riskClass}">
+                            ${escapeHtml(String(p.risk_score))}%
+                        </span>
+                    </td>
+                    <td class="py-4">
+                        <span class="text-xs font-medium text-on-surface-variant">${escapeHtml(statusLabel)}</span>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+    } catch (err) {
+        console.error('Error loading records:', err);
+        document.getElementById('tableBody').innerHTML = '';
+        const errorEl = document.getElementById('tableError');
+        errorEl.textContent = 'Failed to load genomic records. Please refresh the page.';
+        errorEl.classList.remove('hidden');
+    }
+}
+
+loadRecords();
 </script>
 </body>
 </html>
