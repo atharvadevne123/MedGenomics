@@ -2,6 +2,57 @@
 
 A genomics-focused healthcare data management platform built with FastAPI, SQLAlchemy, and a Tailwind CSS frontend. Manages 5,000+ patient genomic records and 3,000+ lab supply items with real-time analytics, search, and export.
 
+---
+
+## Screenshots
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Patient Pool
+![Patient Pool](screenshots/patient-pool.png)
+
+### Patient Detail Panel
+![Patient Detail Panel](screenshots/patient-detail-panel.png)
+
+### Patient — High Risk Filter
+![High Risk Filter](screenshots/patient-filter-high-risk.png)
+
+### Patient — Age Filter
+![Age Filter](screenshots/patient-filter-age.png)
+
+### Patient — Add New Patient Modal
+![Add Patient Modal](screenshots/patient-add-modal.png)
+
+### Inventory
+![Inventory](screenshots/inventory.png)
+
+### Inventory — Kits Filter
+![Inventory Kits Filter](screenshots/inventory-filter-kits.png)
+
+### Inventory — Critical Stock Filter
+![Critical Stock Filter](screenshots/inventory-filter-critical.png)
+
+### Inventory — Adjust Stock Modal
+![Adjust Stock Modal](screenshots/inventory-adjust-modal.png)
+
+### Inventory — Order Supplies Modal
+![Order Supplies Modal](screenshots/inventory-order-modal.png)
+
+### Analytics
+![Analytics](screenshots/analytics.png)
+
+### Genomic Records
+![Genomic Records](screenshots/genomic-records.png)
+
+### Login
+![Login](screenshots/login.png)
+
+### Register
+![Register](screenshots/register.png)
+
+---
+
 ## Features
 
 ### Authentication
