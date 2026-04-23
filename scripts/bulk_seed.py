@@ -9,11 +9,11 @@ Usage:
     python scripts/bulk_seed.py
     DATABASE_URL=postgresql://user:pass@host/db python scripts/bulk_seed.py
 """
-import os
-import sys
-import json
-import random
 import datetime
+import json
+import os
+import random
+import sys
 from pathlib import Path
 
 # Allow running from any directory
