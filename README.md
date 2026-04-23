@@ -1,5 +1,7 @@
 # MedGenomics
 
+[![CI](https://github.com/atharvadevne123/MedGenomics/actions/workflows/ci.yml/badge.svg)](https://github.com/atharvadevne123/MedGenomics/actions/workflows/ci.yml)
+
 A genomics-focused healthcare data management platform built with FastAPI, SQLAlchemy, and a Tailwind CSS frontend. Manages 5,000+ patient genomic records and 3,000+ lab supply items with real-time analytics, search, and export.
 
 ---
@@ -88,7 +90,7 @@ A genomics-focused healthcare data management platform built with FastAPI, SQLAl
 - CORS restricted to `ALLOWED_ORIGINS` env var (never wildcard + credentials)
 - XSS prevention: all API data rendered via `escapeHtml()`, no raw `innerHTML`
 - Tailwind dynamic classes replaced with inline `style=` attributes (CDN build-time safe)
-- Passwords stored as SHA256 hashes
+- Passwords hashed with PBKDF2-HMAC-SHA256 (260 000 iterations, per-user random salt)
 - Token HMAC validated server-side on every protected request
 
 ---
@@ -196,8 +198,8 @@ Copy `.env.example` to `.env` and set:
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| GET | `/api/patients` | — | List all patients |
-| POST | `/api/patients` | — | Create patient (ID auto-generated) |
+| GET | `/api/patients` | — | List patients (`?skip=0&limit=100`) |
+| POST | `/api/patients` | Bearer | Create patient (ID auto-generated) |
 | GET | `/api/patients/search` | — | Search: `?query=&risk_min=&risk_max=` |
 | GET | `/api/patients/{id}` | — | Get single patient |
 | PUT | `/api/patients/{id}` | Bearer | Update patient fields |
@@ -207,10 +209,10 @@ Copy `.env.example` to `.env` and set:
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| GET | `/api/inventory` | — | List all inventory |
+| GET | `/api/inventory` | — | List inventory (`?skip=0&limit=100`) |
 | POST | `/api/inventory` | Bearer | Create supply item |
 | GET | `/api/inventory/search` | — | Search: `?query=&category=` |
-| PUT | `/api/inventory/{id}/adjust` | — | Update `qty_on_hand` only |
+| PUT | `/api/inventory/{id}/adjust` | Bearer | Update `qty_on_hand` only |
 | GET | `/api/inventory/{id}` | — | Get single item |
 | PUT | `/api/inventory/{id}` | Bearer | Update all item fields |
 | DELETE | `/api/inventory/{id}` | Bearer | Delete item |
@@ -263,7 +265,7 @@ Copy `.env.example` to `.env` and set:
 | `id` | VARCHAR PK | UUID |
 | `username` | VARCHAR UNIQUE | |
 | `email` | VARCHAR UNIQUE | |
-| `hashed_password` | VARCHAR | SHA256 |
+| `hashed_password` | VARCHAR | PBKDF2-HMAC-SHA256 with random salt |
 | `role` | VARCHAR | viewer / admin / doctor / lab_tech |
 | `created_at` | DATETIME | |
 
@@ -289,6 +291,18 @@ Copy `.env.example` to `.env` and set:
 - Docker & Docker Compose
 - PostgreSQL 16 Alpine (production)
 - SQLite (local development)
+- GitHub Actions CI (ruff lint + pytest on every push/PR)
+
+---
+
+## Testing
+
+```bash
+pip install pytest pytest-asyncio httpx
+pytest -v
+```
+
+Tests use an isolated `test_medgenomics.db` SQLite database (auto-created and removed). The suite covers authentication, patient CRUD, inventory CRUD, search/filter, pagination, auth guards, and CSV export — 20 tests total.
 
 ---
 
