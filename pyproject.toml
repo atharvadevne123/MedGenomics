@@ -1,6 +1,6 @@
 [build-system]
 requires = ["setuptools>=68", "wheel"]
-build-backend = "setuptools.backends.legacy:build"
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "medgenomics"
@@ -13,4 +13,6 @@ authors = [{name = "atharvadevne123", email = "devneatharva@gmail.com"}]
 
 [tool.setuptools.packages.find]
 where = ["."]
-\n[tool.pytest.ini_options]\npythonpath = ["."]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
