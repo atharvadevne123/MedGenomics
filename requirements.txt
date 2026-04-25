@@ -28,7 +28,7 @@ flake8==6.1.0
 mypy==1.7.1
 
 # Optional: For async support
-aiofiles==23.2.1
+aiofiles==25.1.0
 
 # Optional: For WebSocket testing
 websocket-client==1.6.4
