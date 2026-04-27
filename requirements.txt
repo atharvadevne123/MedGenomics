@@ -18,7 +18,7 @@ pydantic-settings==2.1.0
 
 # Environment / config
 python-dotenv==1.0.0
-httpx==0.25.0
+httpx==0.28.1
 
 # Development
 pytest==7.4.3
