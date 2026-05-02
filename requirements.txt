@@ -34,4 +34,4 @@ aiofiles==25.1.0
 websocket-client==1.6.4
 
 # Optional: Database Migrations
-alembic==1.13.0
+alembic==1.16.5
