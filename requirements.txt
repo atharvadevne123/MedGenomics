@@ -4,7 +4,7 @@
 # Core Framework
 fastapi>=0.115.0
 uvicorn[standard]==0.39.0
-python-multipart==0.0.6
+python-multipart==0.0.20
 
 # Database Drivers
 # Uncomment the one you're using:
