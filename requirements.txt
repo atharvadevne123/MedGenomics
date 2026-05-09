@@ -31,7 +31,7 @@ mypy==1.7.1
 aiofiles==25.1.0
 
 # Optional: For WebSocket testing
-websocket-client==1.6.4
+websocket-client==1.9.0
 
 # Optional: Database Migrations
 alembic==1.16.5
