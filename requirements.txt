@@ -8,7 +8,7 @@ python-multipart==0.0.20
 
 # Database Drivers
 # Uncomment the one you're using:
-sqlalchemy==2.0.23        # ORM
+sqlalchemy==2.0.49        # ORM
 # pymongo==4.6.0            # MongoDB driver
 psycopg2-binary==2.9.12   # PostgreSQL driver
 
