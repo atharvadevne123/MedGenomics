@@ -25,7 +25,7 @@ pytest==8.4.2
 pytest-asyncio==1.2.0
 black==25.11.0
 flake8==7.3.0
-mypy==1.7.1
+mypy==1.19.1
 
 # Optional: For async support
 aiofiles==25.1.0
