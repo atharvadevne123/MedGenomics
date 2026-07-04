@@ -22,7 +22,7 @@ httpx>=0.28.1
 
 # Development
 pytest==9.1.1
-pytest-asyncio==1.2.0
+pytest-asyncio==1.4.0
 black==26.5.1
 flake8==7.3.0
 mypy==2.1.0
