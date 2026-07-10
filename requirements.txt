@@ -14,7 +14,7 @@ psycopg2-binary==2.9.12   # PostgreSQL driver
 
 # Data Validation
 pydantic==2.13.4
-pydantic-settings==2.11.0
+pydantic-settings==2.14.2
 
 # Environment / config
 python-dotenv==1.2.2
